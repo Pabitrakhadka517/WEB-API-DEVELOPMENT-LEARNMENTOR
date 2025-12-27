@@ -1,5 +1,8 @@
 "use client";
 
+
+// This is Home Page
+
 import Link from "next/link";
 import { ArrowRight, BookOpen, Users, ShieldCheck, Sparkles, Star, Globe, Zap } from "lucide-react";
 import Image from "next/image"; 
