@@ -43,7 +43,7 @@ export default function RegisterForm() {
                     type="text"
                     className="h-12 w-full rounded-2xl border-2 border-slate-50 bg-slate-50/50 px-5 text-sm text-slate-900 outline-none transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5"
                     {...register("name")}
-                    placeholder="Jane Doe"
+                    placeholder="Thomas Anderson"
                 />
                 {errors.name?.message && (
                     <p className="text-xs font-semibold text-red-500 ml-2 animate-in fade-in slide-in-from-left-1">
@@ -62,7 +62,7 @@ export default function RegisterForm() {
                     type="email"
                     className="h-12 w-full rounded-2xl border-2 border-slate-50 bg-slate-50/50 px-5 text-sm text-slate-900 outline-none transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5"
                     {...register("email")}
-                    placeholder="name@example.com"
+                    placeholder="thomas@gmail.com"
                 />
                 {errors.email?.message && (
                     <p className="text-xs font-semibold text-red-500 ml-2 animate-in fade-in slide-in-from-left-1">
