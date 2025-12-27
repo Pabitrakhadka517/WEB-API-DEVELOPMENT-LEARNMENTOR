@@ -16,7 +16,7 @@ export default function RegisterPage() {
           </Link>
         </div>
         <div className="relative z-10">
-          <div className="group relative h-[500px] w-full overflow-hidden rounded-[2.5rem] shadow-2xl">
+          <div className="group relative h-125 w-full overflow-hidden rounded-[2.5rem] shadow-2xl">
             <Image
               src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1000"
               alt="Join Community"
@@ -43,9 +43,9 @@ export default function RegisterPage() {
 
       {/* RIGHT SIDE: REGISTER SECTION */}
       <div className="relative flex w-full flex-col justify-center px-8 lg:w-1/2 xl:px-32 bg-slate-50 overflow-hidden">
-        <div className="absolute top-[-10%] right-[-10%] h-[500px] w-[500px] bg-blue-100/30 blur-[120px] rounded-full"></div>
+        <div className="absolute top-[-10%] right-[-10%] h-125 w-125 bg-blue-100/30 blur-[120px] rounded-full"></div>
         
-        <div className="relative z-10 mx-auto w-full max-w-[480px]">
+        <div className="relative z-10 mx-auto w-full max-w-120">
           <div className="w-full bg-white p-10 lg:p-14 rounded-[3.5rem] shadow-[0_40px_80px_-15px_rgba(0,0,80,0.06)] border border-white backdrop-blur-sm">
             
             <div className="mb-10 text-center">
