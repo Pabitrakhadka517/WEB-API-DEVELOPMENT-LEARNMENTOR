@@ -1,15 +1,15 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { RegisterData, registerSchema } from "../schema";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { RegisterData, registerSchema } from "../schema";
 
 export default function RegisterForm() {
     const router = useRouter();
+    const [pending, setTransition] = useTransition();
+
     const {
         register,
         handleSubmit,
@@ -19,90 +19,106 @@ export default function RegisterForm() {
         mode: "onSubmit",
     });
 
-    const [pending, setTransition] = useTransition()
-
     const submit = async (values: RegisterData) => {
-        setTransition( async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+        setTransition(async () => {
+            // 1. Simulate API Delay (Replace with your actual backend call)
+            await new Promise((resolve) => setTimeout(resolve, 1500));
+            
+            console.log("Registration Successful:", values);
+            
+            // 2. Redirect to Login Page
             router.push("/login");
-        })
-        // GO TO LOGIN PAGE
-        console.log("register", values);
+        });
     };
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="space-y-4">
-            <div className="space-y-1">
-                <label className="text-sm font-medium" htmlFor="name">Full name</label>
+        <form onSubmit={handleSubmit(submit)} className="space-y-5">
+            {/* Full Name */}
+            <div className="space-y-2">
+                <label className="text-[13px] font-bold text-slate-800 ml-1 uppercase tracking-wider" htmlFor="name">
+                    Full Name
+                </label>
                 <input
                     id="name"
                     type="text"
-                    autoComplete="name"
-                    className="h-10 w-full rounded-md border border-black/10 dark:border-white/15 bg-background px-3 text-sm outline-none focus:border-foreground/40"
+                    className="h-12 w-full rounded-2xl border-2 border-slate-50 bg-slate-50/50 px-5 text-sm text-slate-900 outline-none transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5"
                     {...register("name")}
                     placeholder="Jane Doe"
                 />
                 {errors.name?.message && (
-                    <p className="text-xs text-red-600">{errors.name.message}</p>
+                    <p className="text-xs font-semibold text-red-500 ml-2 animate-in fade-in slide-in-from-left-1">
+                        {errors.name.message}
+                    </p>
                 )}
             </div>
 
-            <div className="space-y-1">
-                <label className="text-sm font-medium" htmlFor="email">Email</label>
+            {/* Email Address */}
+            <div className="space-y-2">
+                <label className="text-[13px] font-bold text-slate-800 ml-1 uppercase tracking-wider" htmlFor="email">
+                    Email Address
+                </label>
                 <input
                     id="email"
                     type="email"
-                    autoComplete="email"
-                    className="h-10 w-full rounded-md border border-black/10 dark:border-white/15 bg-background px-3 text-sm outline-none focus:border-foreground/40"
+                    className="h-12 w-full rounded-2xl border-2 border-slate-50 bg-slate-50/50 px-5 text-sm text-slate-900 outline-none transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5"
                     {...register("email")}
-                    placeholder="you@example.com"
+                    placeholder="name@example.com"
                 />
                 {errors.email?.message && (
-                    <p className="text-xs text-red-600">{errors.email.message}</p>
+                    <p className="text-xs font-semibold text-red-500 ml-2 animate-in fade-in slide-in-from-left-1">
+                        {errors.email.message}
+                    </p>
                 )}
             </div>
 
-            <div className="space-y-1">
-                <label className="text-sm font-medium" htmlFor="password">Password</label>
+            {/* Password */}
+            <div className="space-y-2">
+                <label className="text-[13px] font-bold text-slate-800 ml-1 uppercase tracking-wider" htmlFor="password">
+                    Password
+                </label>
                 <input
                     id="password"
                     type="password"
-                    autoComplete="new-password"
-                    className="h-10 w-full rounded-md border border-black/10 dark:border-white/15 bg-background px-3 text-sm outline-none focus:border-foreground/40"
+                    className="h-12 w-full rounded-2xl border-2 border-slate-50 bg-slate-50/50 px-5 text-sm text-slate-900 outline-none transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5"
                     {...register("password")}
-                    placeholder="••••••"
+                    placeholder="••••••••"
                 />
                 {errors.password?.message && (
-                    <p className="text-xs text-red-600">{errors.password.message}</p>
+                    <p className="text-xs font-semibold text-red-500 ml-2 animate-in fade-in slide-in-from-left-1">
+                        {errors.password.message}
+                    </p>
                 )}
             </div>
 
-            <div className="space-y-1">
-                <label className="text-sm font-medium" htmlFor="confirmPassword">Confirm password</label>
+            {/* Confirm Password */}
+            <div className="space-y-2">
+                <label className="text-[13px] font-bold text-slate-800 ml-1 uppercase tracking-wider" htmlFor="confirmPassword">
+                    Confirm Password
+                </label>
                 <input
                     id="confirmPassword"
                     type="password"
-                    autoComplete="new-password"
-                    className="h-10 w-full rounded-md border border-black/10 dark:border-white/15 bg-background px-3 text-sm outline-none focus:border-foreground/40"
+                    className="h-12 w-full rounded-2xl border-2 border-slate-50 bg-slate-50/50 px-5 text-sm text-slate-900 outline-none transition-all focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-500/5"
                     {...register("confirmPassword")}
-                    placeholder="••••••"
+                    placeholder="••••••••"
                 />
                 {errors.confirmPassword?.message && (
-                    <p className="text-xs text-red-600">{errors.confirmPassword.message}</p>
+                    <p className="text-xs font-semibold text-red-500 ml-2 animate-in fade-in slide-in-from-left-1">
+                        {errors.confirmPassword.message}
+                    </p>
                 )}
             </div>
 
+            {/* Submit Button */}
             <button
                 type="submit"
                 disabled={isSubmitting || pending}
-                className="h-10 w-full rounded-md bg-foreground text-background text-sm font-semibold hover:opacity-90 disabled:opacity-60"
+                className="group relative h-14 w-full overflow-hidden rounded-2xl bg-blue-600 font-bold text-white shadow-xl shadow-blue-500/25 transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-70 mt-4"
             >
-                { isSubmitting || pending ? "Creating account..." : "Create account"}
+                <span className="relative z-10">
+                    {isSubmitting || pending ? "Creating Account..." : "Signup"}
+                </span>
             </button>
-
-            <div className="mt-1 text-center text-sm">
-                Already have an account? <Link href="/login" className="font-semibold hover:underline">Log in</Link>
-            </div>
         </form>
     );
 }

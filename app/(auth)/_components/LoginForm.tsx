@@ -1,14 +1,13 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
-import { startTransition, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { LoginData, loginSchema } from "../schema";
+import { useRouter } from "next/navigation"; // 1. Import useRouter
+
 export default function LoginForm() {
-    const router = useRouter();
+    const router = useRouter(); // 2. Initialize the router
     const {
         register,
         handleSubmit,
@@ -17,60 +16,71 @@ export default function LoginForm() {
         resolver: zodResolver(loginSchema),
         mode: "onSubmit",
     });
-    const [pending, setTransition] = useTransition()
+    const [pending, setTransition] = useTransition();
 
     const submit = async (values: LoginData) => {
-        // GOTO
-        setTransition( async () => {
+        setTransition(async () => {
+            // Simulate API call delay
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            // router.push("/");
-        })
-        console.log("login", values);
+            
+            console.log("login success:", values);
+            
+            // 3. Redirect to the dashboard page
+            router.push("/dashboard");
+        });
     };
 
     return (
-        <form onSubmit={handleSubmit(submit)} className="space-y-4">
-            <div className="space-y-1">
-                <label className="text-sm font-medium" htmlFor="email">Email</label>
+        <form onSubmit={handleSubmit(submit)} className="space-y-5">
+            {/* Email Field */}
+            <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700" htmlFor="email">
+                    Email Address
+                </label>
                 <input
                     id="email"
                     type="email"
-                    autoComplete="email"
-                    className="h-10 w-full rounded-md border border-black/10 dark:border-white/15 bg-background px-3 text-sm outline-none focus:border-foreground/40"
+                    className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
                     {...register("email")}
-                    placeholder="you@example.com"
+                    placeholder="name@company.com"
                 />
                 {errors.email?.message && (
-                    <p className="text-xs text-red-600">{errors.email.message}</p>
+                    <p className="text-xs font-medium text-red-500 ml-1">{errors.email.message}</p>
                 )}
             </div>
 
-            <div className="space-y-1">
-                <label className="text-sm font-medium" htmlFor="password">Password</label>
+            {/* Password Field */}
+            <div className="space-y-2">
+                <label className="text-sm font-bold text-slate-700" htmlFor="password">
+                    Password
+                </label>
                 <input
                     id="password"
                     type="password"
-                    autoComplete="current-password"
-                    className="h-10 w-full rounded-md border border-black/10 dark:border-white/15 bg-background px-3 text-sm outline-none focus:border-foreground/40"
+                    className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
                     {...register("password")}
-                    placeholder="••••••"
+                    placeholder="••••••••"
                 />
                 {errors.password?.message && (
-                    <p className="text-xs text-red-600">{errors.password.message}</p>
+                    <p className="text-xs font-medium text-red-500 ml-1">{errors.password.message}</p>
                 )}
             </div>
 
+            {/* Forgot Password Link */}
+            <div className="flex justify-end pr-1">
+                <button type="button" className="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+                    Forgot password?
+                </button>
+            </div>
+
+            {/* Submit Button */}
             <button
                 type="submit"
                 disabled={isSubmitting || pending}
-                className="h-10 w-full rounded-md bg-foreground text-background text-sm font-semibold hover:opacity-90 disabled:opacity-60"
+                className="h-12 w-full rounded-xl bg-blue-600 text-white text-sm font-bold shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-70"
             >
-                { isSubmitting || pending ? "Logging in..." : "Log in"}
+                {isSubmitting || pending ? "Signing in..." : "Sign in to account"}
             </button>
-
-            <div className="mt-1 text-center text-sm">
-                Don't have an account? <Link href="/register" className="font-semibold hover:underline">Sign up</Link>
-            </div>
         </form>
     );
 }
