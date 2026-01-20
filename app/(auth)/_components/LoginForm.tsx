@@ -4,10 +4,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition } from "react";
 import { LoginData, loginSchema } from "../schema";
-import { useRouter } from "next/navigation"; // 1. Import useRouter
+import { useRouter } from "next/navigation";
+import { useLoginMutation } from "../../../auth/queries";
+import { useAuthStore } from "../../../store/authStore";
 
 export default function LoginForm() {
-    const router = useRouter(); // 2. Initialize the router
+    const router = useRouter();
+    const { setAuth } = useAuthStore();
+    const loginMutation = useLoginMutation();
     const {
         register,
         handleSubmit,
@@ -20,13 +24,14 @@ export default function LoginForm() {
 
     const submit = async (values: LoginData) => {
         setTransition(async () => {
-            // Simulate API call delay
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            
-            console.log("login success:", values);
-            
-            // 3. Redirect to the dashboard page
-            router.push("/dashboard");
+            try {
+                const data = await loginMutation.mutateAsync(values);
+                // Assuming the response has user and token
+                setAuth(data.user, data.accessToken);
+                router.push("/dashboard");
+            } catch (error) {
+                // Error handled in mutation
+            }
         });
     };
 
@@ -76,10 +81,10 @@ export default function LoginForm() {
             {/* Submit Button */}
             <button
                 type="submit"
-                disabled={isSubmitting || pending}
+                disabled={isSubmitting || pending || loginMutation.isPending}
                 className="h-12 w-full rounded-xl bg-blue-600 text-white text-sm font-bold shadow-lg shadow-blue-200 transition-all hover:bg-blue-700 active:scale-[0.98] disabled:opacity-70"
             >
-                {isSubmitting || pending ? "Signing in..." : "Sign in to account"}
+                {isSubmitting || pending || loginMutation.isPending ? "Signing in..." : "Sign in to account"}
             </button>
         </form>
     );
