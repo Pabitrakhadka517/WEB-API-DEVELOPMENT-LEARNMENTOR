@@ -5,110 +5,120 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
-    User,
-    Phone,
-    MapPin,
-    Briefcase,
-    Camera,
-    Loader2,
-    CheckCircle2,
-    AlertCircle
+    Camera, User, Phone, MapPin, Briefcase, DollarSign, Award,
+    CheckCircle2, AlertCircle, Clock, Loader2, Save, X
 } from 'lucide-react';
-import api from '@/services/api';
+import { useProfile } from '@/hooks';
 import { useAuthStore } from '@/store/auth-store';
 import { cn } from '@/lib/utils';
 
 const profileSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
-    phone: z.string().regex(/^[0-9]{10,15}$/, 'Phone must be 10-15 digits'),
+    phone: z.string().regex(/^[0-9+]{10,15}$/, 'Phone must be 10-15 digits'),
     speciality: z.string().optional(),
     address: z.string().min(5, 'Address must be at least 5 characters'),
+    bio: z.string().optional(),
+    hourlyRate: z.union([z.string(), z.number()]).transform((val) => val === '' ? undefined : Number(val)).optional(),
+    experienceYears: z.union([z.string(), z.number()]).transform((val) => val === '' ? undefined : Number(val)).optional(),
+    subjects: z.array(z.string()).optional(),
+    languages: z.array(z.string()).optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
-    const { user, updateUser } = useAuthStore();
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
+    const { user } = useAuthStore();
+    const { profile, loading, error, fetchProfile, updateProfile, deleteProfileImage } = useProfile();
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-    const [previewImage, setPreviewImage] = useState<string | null>(user?.profileImage || null);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [isDeletingImage, setIsDeletingImage] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const {
         register,
         handleSubmit,
         reset,
+        setValue,
+        watch,
         formState: { errors, isDirty },
     } = useForm<ProfileFormValues>({
-        resolver: zodResolver(profileSchema),
+        resolver: zodResolver(profileSchema) as any,
     });
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const response = await api.get('/profile');
-                const profileData = response.data;
-                reset({
-                    name: profileData.name || '',
-                    phone: profileData.phone || '',
-                    speciality: profileData.speciality || '',
-                    address: profileData.address || '',
-                });
-                setPreviewImage(profileData.profileImage);
-                updateUser(profileData);
-            } catch (err) {
-                console.error('Failed to fetch profile:', err);
-                setMessage({ type: 'error', text: 'Failed to load profile data' });
-            } finally {
-                setLoading(false);
-            }
-        };
+    const watchedSubjects = watch('subjects') || [];
+    const watchedLanguages = watch('languages') || [];
 
+    // Fetch profile on mount
+    useEffect(() => {
         fetchProfile();
-    }, [reset, updateUser]);
+    }, [fetchProfile]);
+
+    // Update form when profile loads
+    useEffect(() => {
+        if (profile) {
+            reset({
+                name: profile.name || profile.fullName || '',
+                phone: profile.phone || '',
+                speciality: profile.speciality || '',
+                address: profile.address || '',
+                bio: profile.bio || '',
+                hourlyRate: profile.hourlyRate,
+                experienceYears: profile.experienceYears,
+                subjects: profile.subjects || [],
+                languages: profile.languages || [],
+            });
+            setPreviewImage(profile.profileImage || null);
+        }
+    }, [profile, reset]);
+
+    // Show error from hook
+    useEffect(() => {
+        if (error) {
+            setMessage({ type: 'error', text: error });
+            const timer = setTimeout(() => setMessage(null), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [error]);
+
+    // Auto-dismiss success message
+    useEffect(() => {
+        if (message?.type === 'success') {
+            const timer = setTimeout(() => setMessage(null), 4000);
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
 
     const onSubmit = async (data: ProfileFormValues) => {
-        setSaving(true);
         setMessage(null);
-
         try {
-            const formData = new FormData();
-            Object.entries(data).forEach(([key, value]) => {
-                if (value) formData.append(key, value);
+            await updateProfile({
+                ...data,
+                profileImage: selectedFile || undefined,
             });
-
-            if (fileInputRef.current?.files?.[0]) {
-                formData.append('profileImage', fileInputRef.current.files[0]);
-            }
-
-            const response = await api.put('/profile', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-
-
-            const updatedProfile = response.data.profile || response.data; // Handle different API responses
-            updateUser(updatedProfile);
-            setPreviewImage(updatedProfile.profileImage);
             setMessage({ type: 'success', text: 'Profile updated successfully!' });
-            reset(data);
-        } catch (err: unknown) {
-            const axiosError = err as { response?: { data?: { error?: string } } };
-            const errorMessage = axiosError.response?.data?.error || 'Failed to update profile';
+            setSelectedFile(null);
+            fetchProfile();
+        } catch (err: any) {
             setMessage({
                 type: 'error',
-                text: errorMessage,
+                text: err.message || 'Failed to update profile',
             });
-        } finally {
-            setSaving(false);
         }
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            if (file.size > 5 * 1024 * 1024) {
+                setMessage({ type: 'error', text: 'File size must be less than 5MB' });
+                return;
+            }
+            if (!file.type.startsWith('image/')) {
+                setMessage({ type: 'error', text: 'Only image files are allowed' });
+                return;
+            }
+            setSelectedFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setPreviewImage(reader.result as string);
@@ -117,146 +127,425 @@ export default function ProfilePage() {
         }
     };
 
-    if (loading) {
+    const handleDeleteImage = async () => {
+        setIsDeletingImage(true);
+        try {
+            await deleteProfileImage();
+            setPreviewImage(null);
+            setSelectedFile(null);
+            setMessage({ type: 'success', text: 'Profile image removed.' });
+        } catch (err: any) {
+            setMessage({ type: 'error', text: err.message || 'Failed to delete image' });
+        } finally {
+            setIsDeletingImage(false);
+        }
+    };
+
+    const addTag = (field: 'subjects' | 'languages', value: string) => {
+        const current = field === 'subjects' ? watchedSubjects : watchedLanguages;
+        if (value && !current.includes(value)) {
+            setValue(field, [...current, value], { shouldDirty: true });
+        }
+    };
+
+    const removeTag = (field: 'subjects' | 'languages', index: number) => {
+        const current = field === 'subjects' ? watchedSubjects : watchedLanguages;
+        setValue(field, current.filter((_, i) => i !== index), { shouldDirty: true });
+    };
+
+    if (loading && !profile) {
         return (
             <div className="flex h-[60vh] items-center justify-center">
-                <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+                <div className="text-center">
+                    <Loader2 className="w-10 h-10 text-indigo-500 animate-spin mx-auto" />
+                    <p className="text-slate-400 mt-4 font-medium">Loading your profile...</p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="max-w-4xl">
+        <div className="max-w-5xl mx-auto animate-in fade-in duration-700">
+            {/* Page Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
-                <p className="text-slate-400">Update your personal information and profile picture.</p>
+                <p className="text-indigo-400 text-sm font-bold uppercase tracking-widest mb-1">Settings</p>
+                <h1 className="text-4xl font-extrabold text-white tracking-tight">Profile Settings</h1>
+                <p className="text-slate-400 mt-2 text-lg">Manage your personal details and public profile.</p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-1">
-                    <div className="bg-white/5 border border-white/10 rounded-3xl p-8 text-center sticky top-8">
-                        <div className="relative inline-block group">
-                            <div className="w-32 h-32 rounded-3xl overflow-hidden bg-indigo-500/10 border-2 border-indigo-500/20 mx-auto">
-                                {previewImage ? (
-                                    <img src={previewImage} alt="Profile" className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-indigo-400">
-                                        {user?.name?.[0] || 'U'}
+            {/* Notification */}
+            {message && (
+                <div className={cn(
+                    "mb-6 p-4 rounded-2xl flex items-center gap-3 animate-in slide-in-from-top-2 duration-300",
+                    message.type === 'success'
+                        ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-300"
+                        : "bg-red-500/10 border border-red-500/20 text-red-300"
+                )}>
+                    {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
+                    <p className="text-sm font-medium flex-1">{message.text}</p>
+                    <button onClick={() => setMessage(null)} className="text-white/40 hover:text-white/80 transition-colors">
+                        <X className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Profile Image + Basic Info Card */}
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 blur-[100px] -mr-20 -mt-20" />
+
+                    <div className="relative z-10 flex flex-col lg:flex-row gap-8 items-start">
+                        {/* Profile Image Section */}
+                        <div className="flex flex-col items-center space-y-4 lg:w-44 flex-shrink-0">
+                            <div className="relative group">
+                                <div className="w-36 h-36 rounded-2xl overflow-hidden bg-indigo-500/10 border-2 border-indigo-500/20 shadow-xl transition-transform group-hover:scale-[1.02] duration-300">
+                                    {previewImage ? (
+                                        <img src={previewImage} alt="Profile" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-5xl font-black text-indigo-400">
+                                            {user?.fullName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
+                                        </div>
+                                    )}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="absolute -bottom-2 -right-2 bg-indigo-600 hover:bg-indigo-500 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-90 hover:rotate-3"
+                                    title="Upload photo"
+                                >
+                                    <Camera className="w-4 h-4" />
+                                </button>
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleImageChange}
+                                    className="hidden"
+                                    accept="image/*"
+                                />
+                            </div>
+
+                            {/* Image actions */}
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+                                >
+                                    Upload
+                                </button>
+                                {(previewImage || profile?.profileImage) && (
+                                    <>
+                                        <span className="text-slate-600">|</span>
+                                        <button
+                                            type="button"
+                                            onClick={handleDeleteImage}
+                                            disabled={isDeletingImage}
+                                            className="text-xs font-semibold text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
+                                        >
+                                            {isDeletingImage ? 'Removing...' : 'Remove'}
+                                        </button>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Role Badge + Status */}
+                            <div className="text-center space-y-2">
+                                <div className="inline-flex px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20">
+                                    {user?.role}
+                                </div>
+                                {user?.role === 'TUTOR' && (
+                                    <div>
+                                        {profile?.verificationStatus === 'VERIFIED' ? (
+                                            <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
+                                                <CheckCircle2 className="w-3 h-3 mr-1" /> Verified
+                                            </div>
+                                        ) : profile?.verificationStatus === 'REJECTED' ? (
+                                            <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 text-[10px] font-bold border border-red-500/20">
+                                                <AlertCircle className="w-3 h-3 mr-1" /> Rejected
+                                            </div>
+                                        ) : (
+                                            <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-yellow-500/10 text-yellow-500 text-[10px] font-bold border border-yellow-500/20">
+                                                <Clock className="w-3 h-3 mr-1" /> Pending
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
-                            <button
-                                onClick={() => fileInputRef.current?.click()}
-                                className="absolute -bottom-2 -right-2 bg-indigo-600 hover:bg-indigo-500 text-white p-2 rounded-xl shadow-lg transition-all active:scale-90"
-                            >
-                                <Camera className="w-4 h-4" />
-                            </button>
-                            <input
-                                type="file"
-                                ref={fileInputRef}
-                                onChange={handleImageChange}
-                                className="hidden"
-                                accept="image/*"
-                            />
                         </div>
-                        <div className="mt-6">
-                            <h3 className="font-bold text-white text-lg truncate px-2">{user?.name}</h3>
-                            <p className="text-slate-400 text-sm mb-4 truncate px-2">{user?.email}</p>
-                            <div className="inline-block px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-xs font-bold uppercase tracking-widest">
-                                {user?.role}
+
+                        {/* Name + Contact Fields */}
+                        <div className="flex-1 space-y-5 w-full">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                {/* Full Name */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                        Full Name
+                                    </label>
+                                    <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                        <input
+                                            {...register('name')}
+                                            placeholder="Your full name"
+                                            className={cn(
+                                                "w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600",
+                                                errors.name && "border-red-400/50 focus:ring-red-400/30"
+                                            )}
+                                        />
+                                    </div>
+                                    {errors.name && <p className="text-xs text-red-400 font-semibold ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.name.message}</p>}
+                                </div>
+
+                                {/* Phone */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                        Phone Number
+                                    </label>
+                                    <div className="relative group">
+                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                        <input
+                                            {...register('phone')}
+                                            placeholder="98XXXXXXXX"
+                                            className={cn(
+                                                "w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600",
+                                                errors.phone && "border-red-400/50 focus:ring-red-400/30"
+                                            )}
+                                        />
+                                    </div>
+                                    {errors.phone && <p className="text-xs text-red-400 font-semibold ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.phone.message}</p>}
+                                </div>
+                            </div>
+
+                            {/* Email (read-only) */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    Email Address
+                                </label>
+                                <div className="px-4 py-3.5 bg-white/[0.03] border border-white/5 rounded-xl text-slate-500 font-medium text-sm">
+                                    {user?.email || 'Not available'}
+                                </div>
+                            </div>
+
+                            {/* Address */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    Address
+                                </label>
+                                <div className="relative group">
+                                    <MapPin className="absolute left-4 top-4 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <textarea
+                                        {...register('address')}
+                                        rows={2}
+                                        placeholder="Your full address"
+                                        className={cn(
+                                            "w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none placeholder:text-slate-600",
+                                            errors.address && "border-red-400/50 focus:ring-red-400/30"
+                                        )}
+                                    />
+                                </div>
+                                {errors.address && <p className="text-xs text-red-400 font-semibold ml-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" /> {errors.address.message}</p>}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div className="lg:col-span-2">
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 space-y-6">
-                            {message && (
-                                <div className={cn(
-                                    "p-4 rounded-2xl flex items-center space-x-3 text-sm font-medium",
-                                    message.type === 'success' ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"
-                                )}>
-                                    {message.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-                                    <span>{message.text}</span>
-                                </div>
-                            )}
+                {/* Professional Details (Tutor-specific) */}
+                {user?.role === 'TUTOR' && (
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8 relative overflow-hidden">
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/5 blur-[100px] -ml-20 -mb-20" />
+                        
+                        <div className="relative z-10 space-y-6">
+                            <div>
+                                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                    <Briefcase className="w-5 h-5 text-indigo-400" /> Professional Details
+                                </h2>
+                                <p className="text-sm text-slate-500 mt-1">These details are visible to students browsing your profile.</p>
+                            </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                {/* Speciality */}
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-400 ml-1 flex items-center">
-                                        <User className="w-4 h-4 mr-2" /> Full Name
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                        Primary Expertise
                                     </label>
-                                    <input
-                                        {...register('name')}
-                                        placeholder="Enter full name"
-                                        className={cn(
-                                            "w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all",
-                                            errors.name && "border-red-400/50"
-                                        )}
-                                    />
-                                    {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
+                                    <div className="relative group">
+                                        <Award className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                        <input
+                                            {...register('speciality')}
+                                            placeholder="e.g. Mathematics Tutor"
+                                            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600"
+                                        />
+                                    </div>
                                 </div>
 
+                                {/* Hourly Rate */}
                                 <div className="space-y-2">
-                                    <label className="text-sm font-medium text-slate-400 ml-1 flex items-center">
-                                        <Phone className="w-4 h-4 mr-2" /> Phone Number
+                                    <label className="text-xs font-bold uppercase tracking-widest text-emerald-400 ml-1">
+                                        Hourly Rate (Rs.)
                                     </label>
-                                    <input
-                                        {...register('phone')}
-                                        placeholder="9876543210"
-                                        className={cn(
-                                            "w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all",
-                                            errors.phone && "border-red-400/50"
-                                        )}
-                                    />
-                                    {errors.phone && <p className="text-xs text-red-400">{errors.phone.message}</p>}
+                                    <div className="relative group">
+                                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-emerald-400 transition-colors" />
+                                        <input
+                                            type="number"
+                                            {...register('hourlyRate')}
+                                            placeholder="500"
+                                            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all placeholder:text-slate-600"
+                                        />
+                                    </div>
                                 </div>
 
-                                <div className="space-y-2 lg:col-span-2">
-                                    <label className="text-sm font-medium text-slate-400 ml-1 flex items-center">
-                                        <Briefcase className="w-4 h-4 mr-2" />
-                                        {user?.role === 'user' ? 'Current Grade / Subjects' :
-                                            user?.role === 'tutor' ? 'Teaching Expertise' : 'Designation'}
+                                {/* Experience */}
+                                <div className="space-y-2">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                        Experience (Years)
                                     </label>
                                     <input
-                                        {...register('speciality')}
-                                        placeholder={user?.role === 'user' ? 'e.g. Grade 12 - Physics' : 'e.g. Senior Mathematics Specialist'}
-                                        className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
+                                        type="number"
+                                        {...register('experienceYears')}
+                                        placeholder="5"
+                                        className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600"
                                     />
-                                </div>
-
-
-                                <div className="space-y-2 lg:col-span-2">
-                                    <label className="text-sm font-medium text-slate-400 ml-1 flex items-center">
-                                        <MapPin className="w-4 h-4 mr-2" /> Address
-                                    </label>
-                                    <textarea
-                                        {...register('address')}
-                                        rows={3}
-                                        placeholder="Your primary address"
-                                        className={cn(
-                                            "w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none",
-                                            errors.address && "border-red-400/50"
-                                        )}
-                                    />
-                                    {errors.address && <p className="text-xs text-red-400">{errors.address.message}</p>}
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="flex items-center justify-end space-x-4">
-                            <button
-                                type="submit"
-                                disabled={saving || !isDirty}
-                                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-semibold shadow-lg shadow-indigo-600/30 transition-all active:scale-95 flex items-center disabled:opacity-50"
-                            >
-                                {saving ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : 'Save Profile'}
-                            </button>
+                            {/* Subjects */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    Teaching Subjects
+                                </label>
+                                <div className="flex flex-wrap gap-2 min-h-[44px] p-3 bg-white/[0.03] border border-white/10 rounded-xl">
+                                    {watchedSubjects.length === 0 && <span className="text-slate-600 text-sm">No subjects added yet</span>}
+                                    {watchedSubjects.map((subject, index) => (
+                                        <span key={index} className="inline-flex items-center px-3 py-1 rounded-lg bg-indigo-500/15 text-indigo-300 text-sm font-semibold border border-indigo-500/20">
+                                            {subject}
+                                            <button
+                                                type="button"
+                                                onClick={() => removeTag('subjects', index)}
+                                                className="ml-1.5 hover:text-white transition-colors"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                                <input
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            addTag('subjects', e.currentTarget.value.trim());
+                                            e.currentTarget.value = '';
+                                        }
+                                    }}
+                                    placeholder="Type a subject and press Enter..."
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600 text-sm"
+                                />
+                            </div>
+
+                            {/* Languages */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    Languages
+                                </label>
+                                <div className="flex flex-wrap gap-2 min-h-[44px] p-3 bg-white/[0.03] border border-white/10 rounded-xl">
+                                    {watchedLanguages.length === 0 && <span className="text-slate-600 text-sm">No languages added yet</span>}
+                                    {watchedLanguages.map((lang, index) => (
+                                        <span key={index} className="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 text-sm font-semibold border border-emerald-500/20">
+                                            {lang}
+                                            <button
+                                                type="button"
+                                                onClick={() => removeTag('languages', index)}
+                                                className="ml-1.5 hover:text-white transition-colors"
+                                            >
+                                                <X className="w-3 h-3" />
+                                            </button>
+                                        </span>
+                                    ))}
+                                </div>
+                                <input
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            e.preventDefault();
+                                            addTag('languages', e.currentTarget.value.trim());
+                                            e.currentTarget.value = '';
+                                        }
+                                    }}
+                                    placeholder="Type a language and press Enter..."
+                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600 text-sm"
+                                />
+                            </div>
+
+                            {/* Bio */}
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    Bio / Introduction
+                                </label>
+                                <textarea
+                                    {...register('bio')}
+                                    rows={4}
+                                    placeholder="Write a compelling bio for students to see..."
+                                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none placeholder:text-slate-600"
+                                />
+                            </div>
                         </div>
-                    </form>
+                    </div>
+                )}
+
+                {/* Student Bio */}
+                {user?.role === 'STUDENT' && (
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                        <div className="space-y-5">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    Speciality / Interest
+                                </label>
+                                <div className="relative group">
+                                    <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <input
+                                        {...register('speciality')}
+                                        placeholder="e.g. Science Student, Engineering Aspirant"
+                                        className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    About You
+                                </label>
+                                <textarea
+                                    {...register('bio')}
+                                    rows={3}
+                                    placeholder="Tell us about yourself and your learning goals..."
+                                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none placeholder:text-slate-600"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Save Button */}
+                <div className="flex items-center justify-between pt-2">
+                    <p className="text-xs text-slate-600">
+                        {selectedFile && <span className="text-indigo-400 font-semibold">New image selected. </span>}
+                        {isDirty && <span className="text-amber-400 font-semibold">You have unsaved changes.</span>}
+                    </p>
+                    <button
+                        type="submit"
+                        disabled={loading || (!isDirty && !selectedFile)}
+                        className="px-10 py-3.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm uppercase tracking-wider shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/40 transition-all active:scale-[0.98] flex items-center gap-2"
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                Saving...
+                            </>
+                        ) : (
+                            <>
+                                <Save className="w-4 h-4" />
+                                Save Changes
+                            </>
+                        )}
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
     );
 }
