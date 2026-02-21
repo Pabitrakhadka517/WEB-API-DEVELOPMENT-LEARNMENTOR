@@ -88,9 +88,9 @@ export default function NotificationsPage() {
     const getIcon = (type: string) => {
         switch (type) {
             case 'BOOKING_REQUEST':
-            case 'BOOKING_CONFIRMED': return <Calendar className="w-5 h-5 text-indigo-400" />;
-            case 'NEW_MESSAGE': return <Mail className="w-5 h-5 text-blue-400" />;
-            case 'REVIEW': return <CheckCircle className="w-5 h-5 text-emerald-400" />;
+            case 'BOOKING_CONFIRMED': return <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
+            case 'NEW_MESSAGE': return <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />;
+            case 'REVIEW': return <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />;
             default: return <Bell className="w-5 h-5 text-slate-400" />;
         }
     };
@@ -99,13 +99,13 @@ export default function NotificationsPage() {
         <div className="max-w-4xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Notifications</h1>
-                    <p className="text-slate-400">Stay updated with your latest activities.</p>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Notifications</h1>
+                    <p className="text-slate-500 dark:text-slate-400">Stay updated with your latest activities.</p>
                 </div>
                 {unreadCount > 0 && (
                     <button
                         onClick={handleMarkAllRead}
-                        className="flex items-center space-x-2 px-4 py-2 bg-indigo-600/10 text-indigo-400 hover:bg-indigo-600/20 rounded-lg text-sm font-medium transition-colors"
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600/20 rounded-lg text-sm font-medium transition-colors"
                     >
                         <Check className="w-4 h-4" />
                         <span>Mark all as read</span>
@@ -115,13 +115,13 @@ export default function NotificationsPage() {
 
             {loading ? (
                 <div className="flex justify-center py-20">
-                    <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
                 </div>
             ) : notifications.length === 0 ? (
-                <div className="text-center py-20 bg-white/5 rounded-2xl border border-white/10">
+                <div className="text-center py-20 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700">
                     <Bell className="w-12 h-12 text-slate-500 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-white mb-2">No notifications</h3>
-                    <p className="text-slate-400">You're all caught up!</p>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">No notifications</h3>
+                    <p className="text-slate-500 dark:text-slate-400">You're all caught up!</p>
                 </div>
             ) : (
                 <div className="space-y-4">
@@ -132,20 +132,20 @@ export default function NotificationsPage() {
                             className={cn(
                                 "flex items-start p-4 rounded-xl border transition-all cursor-pointer group relative overflow-hidden",
                                 notification.isRead
-                                    ? "bg-white/5 border-white/5 hover:border-white/10"
-                                    : "bg-indigo-900/10 border-indigo-500/30 hover:bg-indigo-900/20"
+                                    ? "bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-700"
+                                    : "bg-blue-50 dark:bg-blue-900/10 border-blue-200 dark:border-blue-500/30 hover:bg-blue-100 dark:hover:bg-blue-900/20"
                             )}
                         >
                             {!notification.isRead && (
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500" />
+                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500" />
                             )}
 
-                            <div className="bg-white/5 p-3 rounded-full mr-4 border border-white/5">
+                            <div className="bg-white dark:bg-slate-800 p-3 rounded-full mr-4 border border-slate-100 dark:border-slate-700">
                                 {getIcon(notification.type)}
                             </div>
 
                             <div className="flex-1 min-w-0 pr-8">
-                                <p className={cn("text-sm mb-1", notification.isRead ? "text-slate-300" : "text-white font-medium")}>
+                                <p className={cn("text-sm mb-1", notification.isRead ? "text-slate-600 dark:text-slate-300" : "text-slate-900 dark:text-white font-medium")}>
                                     {notification.message}
                                 </p>
                                 <p className="text-xs text-slate-500">
@@ -155,7 +155,7 @@ export default function NotificationsPage() {
 
                             <button
                                 onClick={(e) => handleDelete(notification._id, e)}
-                                className="absolute top-4 right-4 text-slate-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-2 bg-[#0b0f1a]/80 rounded-lg backdrop-blur-sm"
+                                className="absolute top-4 right-4 text-slate-500 opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-2 bg-white dark:bg-slate-900 rounded-lg backdrop-blur-sm"
                                 title="Delete"
                             >
                                 <Trash2 className="w-4 h-4" />

@@ -120,8 +120,8 @@ export default function ProfileUpdateExample() {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Loading profile...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <p className="text-slate-600">Loading profile...</p>
                 </div>
             </div>
         );
@@ -153,8 +153,8 @@ export default function ProfileUpdateExample() {
                                     className="rounded-full object-cover"
                                 />
                             ) : (
-                                <div className="w-[120px] h-[120px] rounded-full bg-indigo-100 flex items-center justify-center">
-                                    <span className="text-4xl text-indigo-600 font-bold">
+                                <div className="w-[120px] h-[120px] rounded-full bg-blue-100 flex items-center justify-center">
+                                    <span className="text-4xl text-blue-600 font-bold">
                                         {user?.name?.[0]?.toUpperCase() || user?.email[0].toUpperCase()}
                                     </span>
                                 </div>
@@ -166,15 +166,15 @@ export default function ProfileUpdateExample() {
                                 type="file"
                                 accept="image/*"
                                 onChange={handleFileChange}
-                                className="block w-full text-sm text-gray-500
+                                className="block w-full text-sm text-slate-500
                   file:mr-4 file:py-2 file:px-4
                   file:rounded-full file:border-0
                   file:text-sm file:font-semibold
-                  file:bg-indigo-50 file:text-indigo-700
-                  hover:file:bg-indigo-100
+                  file:bg-blue-50 file:text-blue-700
+                  hover:file:bg-blue-100
                   cursor-pointer"
                             />
-                            <p className="text-xs text-gray-500 mt-2">
+                            <p className="text-xs text-slate-500 mt-2">
                                 Max file size: 5MB. Supported formats: JPG, PNG, GIF
                             </p>
 
@@ -197,79 +197,79 @@ export default function ProfileUpdateExample() {
 
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
                                 Email (cannot be changed)
                             </label>
                             <input
                                 type="email"
                                 value={profile?.email || ''}
                                 disabled
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-slate-50 text-slate-500"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
                                 Role
                             </label>
                             <input
                                 type="text"
                                 value={profile?.role || ''}
                                 disabled
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 capitalize"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg bg-slate-50 text-slate-500 capitalize"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
                                 Name
                             </label>
                             <input
                                 type="text"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Enter your name"
                             />
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
                                 Phone
                             </label>
                             <input
                                 type="tel"
                                 value={formData.phone}
                                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="9841234567"
                             />
                         </div>
 
                         {user?.role === 'TUTOR' && (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
                                     Speciality
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.speciality}
                                     onChange={(e) => setFormData({ ...formData, speciality: e.target.value })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="e.g., Mathematics, Physics"
                                 />
                             </div>
                         )}
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                            <label className="block text-sm font-medium text-slate-700 mb-1">
                                 Address
                             </label>
                             <textarea
                                 value={formData.address}
                                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                                 rows={3}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 placeholder="Enter your address"
                             />
                         </div>
@@ -283,7 +283,7 @@ export default function ProfileUpdateExample() {
                         <button
                             type="button"
                             onClick={() => setShowPasswordChange(!showPasswordChange)}
-                            className="text-sm text-indigo-600 hover:text-indigo-800"
+                            className="text-sm text-blue-600 hover:text-blue-800"
                         >
                             {showPasswordChange ? 'Cancel' : 'Change Password'}
                         </button>
@@ -292,40 +292,40 @@ export default function ProfileUpdateExample() {
                     {showPasswordChange && (
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
                                     Current Password
                                 </label>
                                 <input
                                     type="password"
                                     value={passwordData.oldPassword}
                                     onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="Enter current password"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
                                     New Password
                                 </label>
                                 <input
                                     type="password"
                                     value={passwordData.newPassword}
                                     onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="Enter new password (min 6 characters)"
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-slate-700 mb-1">
                                     Confirm New Password
                                 </label>
                                 <input
                                     type="password"
                                     value={passwordData.confirmPassword}
                                     onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="Confirm new password"
                                 />
                             </div>
@@ -338,14 +338,14 @@ export default function ProfileUpdateExample() {
                     <button
                         type="button"
                         onClick={() => window.location.reload()}
-                        className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                        className="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50"
                     >
                         Cancel
                     </button>
                     <button
                         type="submit"
                         disabled={loading}
-                        className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? 'Updating...' : 'Update Profile'}
                     </button>

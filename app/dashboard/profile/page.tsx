@@ -157,8 +157,8 @@ export default function ProfilePage() {
         return (
             <div className="flex h-[60vh] items-center justify-center">
                 <div className="text-center">
-                    <Loader2 className="w-10 h-10 text-indigo-500 animate-spin mx-auto" />
-                    <p className="text-slate-400 mt-4 font-medium">Loading your profile...</p>
+                    <Loader2 className="w-10 h-10 text-blue-500 animate-spin mx-auto" />
+                    <p className="text-slate-500 dark:text-slate-400 mt-4 font-medium">Loading your profile...</p>
                 </div>
             </div>
         );
@@ -168,9 +168,9 @@ export default function ProfilePage() {
         <div className="max-w-5xl mx-auto animate-in fade-in duration-700">
             {/* Page Header */}
             <div className="mb-8">
-                <p className="text-indigo-400 text-sm font-bold uppercase tracking-widest mb-1">Settings</p>
-                <h1 className="text-4xl font-extrabold text-white tracking-tight">Profile Settings</h1>
-                <p className="text-slate-400 mt-2 text-lg">Manage your personal details and public profile.</p>
+                <p className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-widest mb-1">Settings</p>
+                <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Profile Settings</h1>
+                <p className="text-slate-500 dark:text-slate-400 mt-2 text-lg">Manage your personal details and public profile.</p>
             </div>
 
             {/* Notification */}
@@ -178,12 +178,12 @@ export default function ProfilePage() {
                 <div className={cn(
                     "mb-6 p-4 rounded-2xl flex items-center gap-3 animate-in slide-in-from-top-2 duration-300",
                     message.type === 'success'
-                        ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-300"
-                        : "bg-red-500/10 border border-red-500/20 text-red-300"
+                        ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+                        : "bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-300"
                 )}>
                     {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
                     <p className="text-sm font-medium flex-1">{message.text}</p>
-                    <button onClick={() => setMessage(null)} className="text-white/40 hover:text-white/80 transition-colors">
+                    <button onClick={() => setMessage(null)} className="text-slate-400 hover:text-slate-600 dark:text-white/40 dark:hover:text-white/80 transition-colors">
                         <X className="w-4 h-4" />
                     </button>
                 </div>
@@ -191,18 +191,18 @@ export default function ProfilePage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Profile Image + Basic Info Card */}
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-8 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-600/5 blur-[100px] -mr-20 -mt-20" />
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[100px] -mr-20 -mt-20" />
 
                     <div className="relative z-10 flex flex-col lg:flex-row gap-8 items-start">
                         {/* Profile Image Section */}
                         <div className="flex flex-col items-center space-y-4 lg:w-44 flex-shrink-0">
                             <div className="relative group">
-                                <div className="w-36 h-36 rounded-2xl overflow-hidden bg-indigo-500/10 border-2 border-indigo-500/20 shadow-xl transition-transform group-hover:scale-[1.02] duration-300">
+                                <div className="w-36 h-36 rounded-2xl overflow-hidden bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500/20 shadow-md transition-transform group-hover:scale-[1.02] duration-300">
                                     {previewImage ? (
                                         <img src={previewImage} alt="Profile" className="w-full h-full object-cover" />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center text-5xl font-black text-indigo-400">
+                                        <div className="w-full h-full flex items-center justify-center text-5xl font-bold text-blue-600 dark:text-blue-400">
                                             {user?.fullName?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
                                         </div>
                                     )}
@@ -210,7 +210,7 @@ export default function ProfilePage() {
                                 <button
                                     type="button"
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="absolute -bottom-2 -right-2 bg-indigo-600 hover:bg-indigo-500 text-white p-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all active:scale-90 hover:rotate-3"
+                                    className="absolute -bottom-2 -right-2 bg-blue-600 hover:bg-blue-500 text-white p-2.5 rounded-xl shadow-lg shadow-blue-600/30 transition-all active:scale-90 hover:rotate-3"
                                     title="Upload photo"
                                 >
                                     <Camera className="w-4 h-4" />
@@ -229,18 +229,18 @@ export default function ProfilePage() {
                                 <button
                                     type="button"
                                     onClick={() => fileInputRef.current?.click()}
-                                    className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+                                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-300 transition-colors"
                                 >
                                     Upload
                                 </button>
                                 {(previewImage || profile?.profileImage) && (
                                     <>
-                                        <span className="text-slate-600">|</span>
+                                        <span className="text-slate-600 dark:text-slate-400">|</span>
                                         <button
                                             type="button"
                                             onClick={handleDeleteImage}
                                             disabled={isDeletingImage}
-                                            className="text-xs font-semibold text-red-400 hover:text-red-300 transition-colors disabled:opacity-50"
+                                            className="text-xs font-semibold text-red-400 hover:text-red-300 hover:underline transition-colors disabled:opacity-50"
                                         >
                                             {isDeletingImage ? 'Removing...' : 'Remove'}
                                         </button>
@@ -250,17 +250,17 @@ export default function ProfilePage() {
 
                             {/* Role Badge + Status */}
                             <div className="text-center space-y-2">
-                                <div className="inline-flex px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-widest border border-indigo-500/20">
+                                <div className="inline-flex px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-[10px] font-bold uppercase tracking-widest border border-blue-500/20">
                                     {user?.role}
                                 </div>
                                 {user?.role === 'TUTOR' && (
                                     <div>
                                         {profile?.verificationStatus === 'VERIFIED' ? (
-                                            <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
+                                            <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold border border-emerald-500/20">
                                                 <CheckCircle2 className="w-3 h-3 mr-1" /> Verified
                                             </div>
                                         ) : profile?.verificationStatus === 'REJECTED' ? (
-                                            <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 text-[10px] font-bold border border-red-500/20">
+                                            <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-red-500/10 text-red-700 dark:text-red-400 text-[10px] font-bold border border-red-500/20">
                                                 <AlertCircle className="w-3 h-3 mr-1" /> Rejected
                                             </div>
                                         ) : (
@@ -278,16 +278,16 @@ export default function ProfilePage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 {/* Full Name */}
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                         Full Name
                                     </label>
                                     <div className="relative group">
-                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 dark:text-slate-400 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors" />
                                         <input
                                             {...register('name')}
                                             placeholder="Your full name"
                                             className={cn(
-                                                "w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600",
+                                                "w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400",
                                                 errors.name && "border-red-400/50 focus:ring-red-400/30"
                                             )}
                                         />
@@ -297,16 +297,16 @@ export default function ProfilePage() {
 
                                 {/* Phone */}
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                         Phone Number
                                     </label>
                                     <div className="relative group">
-                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 dark:text-slate-400 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors" />
                                         <input
                                             {...register('phone')}
                                             placeholder="98XXXXXXXX"
                                             className={cn(
-                                                "w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600",
+                                                "w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400",
                                                 errors.phone && "border-red-400/50 focus:ring-red-400/30"
                                             )}
                                         />
@@ -317,27 +317,27 @@ export default function ProfilePage() {
 
                             {/* Email (read-only) */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     Email Address
                                 </label>
-                                <div className="px-4 py-3.5 bg-white/[0.03] border border-white/5 rounded-xl text-slate-500 font-medium text-sm">
+                                <div className="px-4 py-3.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl text-slate-500 dark:text-slate-400 font-medium text-sm">
                                     {user?.email || 'Not available'}
                                 </div>
                             </div>
 
                             {/* Address */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     Address
                                 </label>
                                 <div className="relative group">
-                                    <MapPin className="absolute left-4 top-4 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <MapPin className="absolute left-4 top-4 w-5 h-5 text-slate-500 dark:text-slate-400 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors" />
                                     <textarea
                                         {...register('address')}
                                         rows={2}
                                         placeholder="Your full address"
                                         className={cn(
-                                            "w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none placeholder:text-slate-600",
+                                            "w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all resize-none placeholder:text-slate-400",
                                             errors.address && "border-red-400/50 focus:ring-red-400/30"
                                         )}
                                     />
@@ -350,77 +350,77 @@ export default function ProfilePage() {
 
                 {/* Professional Details (Tutor-specific) */}
                 {user?.role === 'TUTOR' && (
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8 relative overflow-hidden">
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/5 blur-[100px] -ml-20 -mb-20" />
+                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 relative overflow-hidden">
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-600/5 blur-[100px] -ml-20 -mb-20" />
                         
                         <div className="relative z-10 space-y-6">
                             <div>
-                                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                                    <Briefcase className="w-5 h-5 text-indigo-400" /> Professional Details
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <Briefcase className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Professional Details
                                 </h2>
-                                <p className="text-sm text-slate-500 mt-1">These details are visible to students browsing your profile.</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">These details are visible to students browsing your profile.</p>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                                 {/* Speciality */}
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                         Primary Expertise
                                     </label>
                                     <div className="relative group">
-                                        <Award className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                        <Award className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 dark:text-slate-400 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors" />
                                         <input
                                             {...register('speciality')}
                                             placeholder="e.g. Mathematics Tutor"
-                                            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600"
+                                            className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Hourly Rate */}
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-emerald-400 ml-1">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400 ml-1">
                                         Hourly Rate (Rs.)
                                     </label>
                                     <div className="relative group">
-                                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-emerald-400 transition-colors" />
+                                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 dark:text-slate-400 group-focus-within:text-emerald-400 transition-colors" />
                                         <input
                                             type="number"
                                             {...register('hourlyRate')}
                                             placeholder="500"
-                                            className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all placeholder:text-slate-600"
+                                            className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all placeholder:text-slate-400"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Experience */}
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                         Experience (Years)
                                     </label>
                                     <input
                                         type="number"
                                         {...register('experienceYears')}
                                         placeholder="5"
-                                        className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600"
+                                        className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400"
                                     />
                                 </div>
                             </div>
 
                             {/* Subjects */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     Teaching Subjects
                                 </label>
-                                <div className="flex flex-wrap gap-2 min-h-[44px] p-3 bg-white/[0.03] border border-white/10 rounded-xl">
-                                    {watchedSubjects.length === 0 && <span className="text-slate-600 text-sm">No subjects added yet</span>}
+                                <div className="flex flex-wrap gap-2 min-h-[44px] p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+                                    {watchedSubjects.length === 0 && <span className="text-slate-600 dark:text-slate-400 text-sm">No subjects added yet</span>}
                                     {watchedSubjects.map((subject, index) => (
-                                        <span key={index} className="inline-flex items-center px-3 py-1 rounded-lg bg-indigo-500/15 text-indigo-300 text-sm font-semibold border border-indigo-500/20">
+                                        <span key={index} className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm font-semibold border border-blue-500/20">
                                             {subject}
                                             <button
                                                 type="button"
                                                 onClick={() => removeTag('subjects', index)}
-                                                className="ml-1.5 hover:text-white transition-colors"
+                                                className="ml-1.5 hover:text-slate-900 dark:hover:text-white transition-colors"
                                             >
                                                 <X className="w-3 h-3" />
                                             </button>
@@ -436,24 +436,24 @@ export default function ProfilePage() {
                                         }
                                     }}
                                     placeholder="Type a subject and press Enter..."
-                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600 text-sm"
+                                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400 text-sm"
                                 />
                             </div>
 
                             {/* Languages */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     Languages
                                 </label>
-                                <div className="flex flex-wrap gap-2 min-h-[44px] p-3 bg-white/[0.03] border border-white/10 rounded-xl">
-                                    {watchedLanguages.length === 0 && <span className="text-slate-600 text-sm">No languages added yet</span>}
+                                <div className="flex flex-wrap gap-2 min-h-[44px] p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+                                    {watchedLanguages.length === 0 && <span className="text-slate-600 dark:text-slate-400 text-sm">No languages added yet</span>}
                                     {watchedLanguages.map((lang, index) => (
-                                        <span key={index} className="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 text-sm font-semibold border border-emerald-500/20">
+                                        <span key={index} className="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 text-sm font-semibold border border-emerald-500/20">
                                             {lang}
                                             <button
                                                 type="button"
                                                 onClick={() => removeTag('languages', index)}
-                                                className="ml-1.5 hover:text-white transition-colors"
+                                                className="ml-1.5 hover:text-slate-900 dark:hover:text-white transition-colors"
                                             >
                                                 <X className="w-3 h-3" />
                                             </button>
@@ -469,20 +469,20 @@ export default function ProfilePage() {
                                         }
                                     }}
                                     placeholder="Type a language and press Enter..."
-                                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600 text-sm"
+                                    className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400 text-sm"
                                 />
                             </div>
 
                             {/* Bio */}
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     Bio / Introduction
                                 </label>
                                 <textarea
                                     {...register('bio')}
                                     rows={4}
                                     placeholder="Write a compelling bio for students to see..."
-                                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none placeholder:text-slate-600"
+                                    className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all resize-none placeholder:text-slate-400"
                                 />
                             </div>
                         </div>
@@ -491,30 +491,30 @@ export default function ProfilePage() {
 
                 {/* Student Bio */}
                 {user?.role === 'STUDENT' && (
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-8">
                         <div className="space-y-5">
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     Speciality / Interest
                                 </label>
                                 <div className="relative group">
-                                    <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+                                    <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 dark:text-slate-400 group-focus-within:text-blue-600 dark:group-focus-within:text-blue-400 transition-colors" />
                                     <input
                                         {...register('speciality')}
                                         placeholder="e.g. Science Student, Engineering Aspirant"
-                                        className="w-full pl-12 pr-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all placeholder:text-slate-600"
+                                        className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all placeholder:text-slate-400"
                                     />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400 ml-1">
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     About You
                                 </label>
                                 <textarea
                                     {...register('bio')}
                                     rows={3}
                                     placeholder="Tell us about yourself and your learning goals..."
-                                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all resize-none placeholder:text-slate-600"
+                                    className="w-full px-4 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all resize-none placeholder:text-slate-400"
                                 />
                             </div>
                         </div>
@@ -523,14 +523,14 @@ export default function ProfilePage() {
 
                 {/* Save Button */}
                 <div className="flex items-center justify-between pt-2">
-                    <p className="text-xs text-slate-600">
-                        {selectedFile && <span className="text-indigo-400 font-semibold">New image selected. </span>}
-                        {isDirty && <span className="text-amber-400 font-semibold">You have unsaved changes.</span>}
+                    <p className="text-xs text-slate-600 dark:text-slate-400">
+                        {selectedFile && <span className="text-blue-600 dark:text-blue-400 font-semibold">New image selected. </span>}
+                        {isDirty && <span className="text-amber-600 dark:text-amber-400 font-semibold">You have unsaved changes.</span>}
                     </p>
                     <button
                         type="submit"
                         disabled={loading || (!isDirty && !selectedFile)}
-                        className="px-10 py-3.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm uppercase tracking-wider shadow-lg shadow-indigo-600/30 hover:shadow-indigo-500/40 transition-all active:scale-[0.98] flex items-center gap-2"
+                        className="px-10 py-3.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-bold text-sm uppercase tracking-wider shadow-lg shadow-blue-600/30 hover:shadow-blue-500/40 transition-all active:scale-[0.98] flex items-center gap-2"
                     >
                         {loading ? (
                             <>

@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (!mounted || !user || user.role !== 'ADMIN') return null;
 
     return (
-        <div className="min-h-screen bg-[#0b0f1a] flex">
+        <div className="min-h-screen bg-white dark:bg-slate-900 flex">
             <AdminSidebar userName={user.fullName || user.email} />
             <div className="flex-1 ml-64">
                 {children}

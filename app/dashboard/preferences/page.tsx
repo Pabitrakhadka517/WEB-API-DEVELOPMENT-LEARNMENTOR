@@ -99,19 +99,19 @@ const PreferencesSettings: React.FC = () => {
     const isTutor = user.role === 'TUTOR';
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen bg-white dark:bg-slate-900">
             <div className="max-w-4xl mx-auto p-6 lg:p-10">
                 {/* Header */}
-                <div className="mb-8 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="mb-8 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
                     <div className="flex items-center space-x-4">
                         <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
                             <Settings className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                         </div>
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                            <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">
                                 Preferences & Settings
                             </h1>
-                            <p className="text-gray-600 dark:text-gray-400">
+                            <p className="text-slate-600 dark:text-slate-400">
                                 Customize your experience and manage your preferences
                             </p>
                         </div>
@@ -120,30 +120,30 @@ const PreferencesSettings: React.FC = () => {
 
                 <div className="space-y-6">
                     {/* Theme Settings */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
                         <ThemeToggle variant="settings" />
                     </div>
 
                     {/* Notification Settings */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
                         <div className="flex items-center space-x-2 mb-6">
-                            <Bell className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            <Bell className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                            <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">
                                 Notification Preferences
                             </h3>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {Object.entries(preferences.notifications).map(([key, value]) => (
-                                <label key={key} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                <label key={key} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300 capitalize">
                                         {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                                     </span>
                                     <input
                                         type="checkbox"
                                         checked={value}
                                         onChange={(e) => handlePreferenceChange('notifications', key, e.target.checked)}
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
+                                        className="w-4 h-4 text-blue-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
                                     />
                                 </label>
                             ))}
@@ -151,23 +151,23 @@ const PreferencesSettings: React.FC = () => {
                     </div>
 
                     {/* Privacy Settings */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
                         <div className="flex items-center space-x-2 mb-6">
-                            <Shield className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            <Shield className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                            <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">
                                 Privacy Settings
                             </h3>
                         </div>
                         
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                                     Profile Visibility
                                 </label>
                                 <select
                                     value={preferences.privacy.profileVisibility}
                                     onChange={(e) => handlePreferenceChange('privacy', 'profileVisibility', e.target.value)}
-                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="public">Public - Visible to everyone</option>
                                     <option value="tutorsOnly">Tutors Only - Only tutors can see your profile</option>
@@ -176,15 +176,15 @@ const PreferencesSettings: React.FC = () => {
                             </div>
                             
                             {(['showOnlineStatus', 'allowDirectMessages'] as const).map((key) => (
-                                <label key={key} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                <label key={key} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300 capitalize">
                                         {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                                     </span>
                                     <input
                                         type="checkbox"
                                         checked={preferences.privacy[key]}
                                         onChange={(e) => handlePreferenceChange('privacy', key, e.target.checked)}
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
+                                        className="w-4 h-4 text-blue-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
                                     />
                                 </label>
                             ))}
@@ -192,25 +192,25 @@ const PreferencesSettings: React.FC = () => {
                     </div>
 
                     {/* Accessibility Settings */}
-                    <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
                         <div className="flex items-center space-x-2 mb-6">
-                            <User className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-                            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                            <User className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                            <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">
                                 Accessibility Options
                             </h3>
                         </div>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {Object.entries(preferences.accessibility).map(([key, value]) => (
-                                <label key={key} className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
+                                <label key={key} className="flex items-center justify-between p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300 capitalize">
                                         {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
                                     </span>
                                     <input
                                         type="checkbox"
                                         checked={value}
                                         onChange={(e) => handlePreferenceChange('accessibility', key, e.target.checked)}
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
+                                        className="w-4 h-4 text-blue-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
                                     />
                                 </label>
                             ))}
@@ -219,14 +219,14 @@ const PreferencesSettings: React.FC = () => {
 
                     {/* Admin/Tutor Specific Settings */}
                     {(isAdmin || isTutor) && (
-                        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
                             <div className="flex items-center space-x-2 mb-6">
                                 {isAdmin ? (
-                                    <Shield className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                                    <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                                 ) : (
                                     <User className="w-5 h-5 text-green-600 dark:text-green-400" />
                                 )}
-                                <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                                <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">
                                     {isAdmin ? 'Admin Settings' : 'Tutor Settings'}
                                 </h3>
                             </div>
@@ -234,18 +234,18 @@ const PreferencesSettings: React.FC = () => {
                             <div className="space-y-4">
                                 {isAdmin && (
                                     <>
-                                        <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                                            <h4 className="font-medium text-purple-900 dark:text-purple-100 mb-2">
+                                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                                            <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
                                                 System-wide Theme Control
                                             </h4>
-                                            <p className="text-sm text-purple-700 dark:text-purple-300 mb-3">
+                                            <p className="text-sm text-blue-700 dark:text-blue-300 mb-3">
                                                 Set the default theme for new users and override individual preferences if needed.
                                             </p>
                                             <div className="flex items-center space-x-3">
-                                                <label className="text-sm font-medium text-purple-900 dark:text-purple-100">
+                                                <label className="text-sm font-medium text-blue-900 dark:text-blue-100">
                                                     Default Theme:
                                                 </label>
-                                                <select className="px-3 py-1 text-sm border border-purple-300 dark:border-purple-700 rounded-md bg-white dark:bg-purple-900/50 text-purple-900 dark:text-purple-100">
+                                                <select className="px-3 py-1 text-sm border border-blue-300 dark:border-blue-700 rounded-md bg-white dark:bg-blue-900/50 text-blue-900 dark:text-blue-100">
                                                     <option value="system">System Preference</option>
                                                     <option value="light">Light Mode</option>
                                                     <option value="dark">Dark Mode</option>
@@ -253,14 +253,14 @@ const PreferencesSettings: React.FC = () => {
                                             </div>
                                         </div>
                                         
-                                        <label className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                                 Allow users to override theme settings
                                             </span>
                                             <input
                                                 type="checkbox"
                                                 defaultChecked={true}
-                                                className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
+                                                className="w-4 h-4 text-blue-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
                                             />
                                         </label>
                                     </>
@@ -268,23 +268,23 @@ const PreferencesSettings: React.FC = () => {
                                 
                                 {isTutor && (
                                     <div className="space-y-3">
-                                        <label className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                                 Auto-accept bookings
                                             </span>
                                             <input
                                                 type="checkbox"
-                                                className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
+                                                className="w-4 h-4 text-blue-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
                                             />
                                         </label>
-                                        <label className="flex items-center justify-between p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                                            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
                                                 Show availability in student searches
                                             </span>
                                             <input
                                                 type="checkbox"
                                                 defaultChecked={true}
-                                                className="w-4 h-4 text-blue-600 bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
+                                                className="w-4 h-4 text-blue-600 bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 rounded focus:ring-blue-500 dark:focus:ring-blue-400"
                                             />
                                         </label>
                                     </div>
@@ -294,7 +294,7 @@ const PreferencesSettings: React.FC = () => {
                     )}
 
                     {/* Save Button */}
-                    <div className="flex items-center justify-end space-x-4 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-end space-x-4 bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-slate-200 dark:border-slate-700">
                         {saveStatus === 'success' && (
                             <div className="flex items-center space-x-2 text-green-600 dark:text-green-400">
                                 <CheckCircle2 className="w-4 h-4" />

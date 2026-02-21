@@ -18,6 +18,29 @@ export const metadata: Metadata = {
   description: "Connect with tutors and enhance your learning experience",
 };
 
+// Inline script to prevent theme flash on page load (FOUC)
+// Reads the Zustand-persisted theme from localStorage before first paint
+const themeInitScript = `
+(function() {
+  try {
+    var raw = localStorage.getItem('theme-storage');
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      var theme = parsed && parsed.state && parsed.state.theme;
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark');
+        document.documentElement.style.colorScheme = 'dark';
+      } else if (theme === 'system') {
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          document.documentElement.classList.add('dark');
+          document.documentElement.style.colorScheme = 'dark';
+        }
+      }
+    }
+  } catch (e) {}
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,6 +48,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

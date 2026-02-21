@@ -15,12 +15,12 @@ function RoleBadge({ role }: { role: string }) {
     const r = role?.toUpperCase();
     const display = r === 'USER' ? 'STUDENT' : r;
     const styles: Record<string, string> = {
-        ADMIN: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-        TUTOR: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+        ADMIN: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',
+        TUTOR: 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800',
         STUDENT: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
     };
     return (
-        <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest border", styles[r] || 'bg-white/10 text-slate-400 border-white/10')}>
+        <span className={cn("px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest border", styles[r] || 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700')}>
             {display}
         </span>
     );
@@ -30,9 +30,9 @@ function RoleBadge({ role }: { role: string }) {
 function VerifBadge({ status }: { status?: string }) {
     if (!status) return null;
     const s = status.toUpperCase();
-    if (s === 'VERIFIED') return <span className="flex items-center gap-1 text-[9px] font-black text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded-lg"><CheckCircle2 className="w-2.5 h-2.5" />VERIFIED</span>;
-    if (s === 'PENDING') return <span className="flex items-center gap-1 text-[9px] font-black text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded-lg"><Clock className="w-2.5 h-2.5" />PENDING</span>;
-    if (s === 'REJECTED') return <span className="flex items-center gap-1 text-[9px] font-black text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded-lg"><XCircle className="w-2.5 h-2.5" />REJECTED</span>;
+    if (s === 'VERIFIED') return <span className="flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-400/10 px-1.5 py-0.5 rounded-lg"><CheckCircle2 className="w-2.5 h-2.5" />VERIFIED</span>;
+    if (s === 'PENDING') return <span className="flex items-center gap-1 text-[9px] font-bold text-amber-400 bg-amber-400/10 px-1.5 py-0.5 rounded-lg"><Clock className="w-2.5 h-2.5" />PENDING</span>;
+    if (s === 'REJECTED') return <span className="flex items-center gap-1 text-[9px] font-bold text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded-lg"><XCircle className="w-2.5 h-2.5" />REJECTED</span>;
     return null;
 }
 
@@ -90,17 +90,17 @@ export default function AdminUsersPage() {
         <div className="p-8 space-y-8 animate-in fade-in duration-500">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black text-white flex items-center gap-3">
-                        <Users className="w-8 h-8 text-purple-500" />
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                        <Users className="w-8 h-8 text-blue-500" />
                         User Management
                     </h1>
-                    <p className="text-slate-400 mt-1 font-medium">Manage student, tutor, and admin accounts.</p>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium">Manage student, tutor, and admin accounts.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => fetchUsers(true)}
                         disabled={refreshing}
-                        className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-slate-400 hover:text-white transition-all shadow-lg"
+                        className="p-3 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all shadow-lg"
                     >
                         <RefreshCw className={cn("w-5 h-5", refreshing && "animate-spin")} />
                     </button>
@@ -111,26 +111,26 @@ export default function AdminUsersPage() {
                             placeholder="Search by name or email..."
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
-                            className="pl-11 pr-6 py-3 bg-white/5 border border-white/10 rounded-2xl text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-purple-500/40 w-64 transition-all"
+                            className="pl-11 pr-6 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 w-64 transition-all"
                         />
                     </div>
                 </div>
             </div>
 
             {/* Filters Bar */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl p-4 flex flex-wrap items-center gap-6 shadow-xl">
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-4 flex flex-wrap items-center gap-6 shadow-sm">
                 <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
                         <Filter className="w-3 h-3" /> Role:
                     </span>
-                    <div className="flex bg-black/20 rounded-xl p-1 gap-1 border border-white/5">
+                    <div className="flex bg-black/20 rounded-xl p-1 gap-1 border border-slate-100 dark:border-slate-700">
                         {(['ALL', 'STUDENT', 'TUTOR', 'ADMIN'] as const).map(r => (
                             <button
                                 key={r}
                                 onClick={() => { setRoleFilter(r); setPage(1); }}
                                 className={cn(
-                                    "px-4 py-1.5 rounded-lg text-[10px] font-black transition-all uppercase tracking-wider",
-                                    roleFilter === r ? "bg-purple-600 text-white shadow-lg shadow-purple-600/20" : "text-slate-500 hover:text-slate-300"
+                                    "px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all uppercase tracking-wider",
+                                    roleFilter === r ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
                                 )}
                             >
                                 {r}
@@ -139,18 +139,18 @@ export default function AdminUsersPage() {
                     </div>
                 </div>
 
-                <div className="h-6 w-px bg-white/10 hidden md:block" />
+                <div className="h-6 w-px bg-slate-100 dark:bg-slate-700 hidden md:block" />
 
                 <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Status:</span>
-                    <div className="flex bg-black/20 rounded-xl p-1 gap-1 border border-white/5">
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Status:</span>
+                    <div className="flex bg-black/20 rounded-xl p-1 gap-1 border border-slate-100 dark:border-slate-700">
                         {(['ALL', 'Active', 'Inactive'] as const).map(s => (
                             <button
                                 key={s}
                                 onClick={() => { setStatusFilter(s); setPage(1); }}
                                 className={cn(
-                                    "px-4 py-1.5 rounded-lg text-[10px] font-black transition-all uppercase tracking-wider",
-                                    statusFilter === s ? "bg-purple-600 text-white shadow-lg shadow-purple-600/20" : "text-slate-500 hover:text-slate-300"
+                                    "px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all uppercase tracking-wider",
+                                    statusFilter === s ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20" : "text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
                                 )}
                             >
                                 {s}
@@ -160,18 +160,18 @@ export default function AdminUsersPage() {
                 </div>
 
                 <div className="ml-auto">
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest px-3">
+                    <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest px-3">
                         Total {pagination.total} Users Found
                     </p>
                 </div>
             </div>
 
             {/* Table */}
-            <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl overflow-hidden shadow-md">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-black/20 text-slate-500 text-[10px] uppercase tracking-widest font-black border-b border-white/5">
+                            <tr className="bg-black/20 text-slate-500 text-[10px] uppercase tracking-widest font-bold border-b border-slate-100 dark:border-slate-700">
                                 <th className="px-8 py-5">Profile</th>
                                 <th className="px-8 py-5">Role & Verification</th>
                                 <th className="px-8 py-5">Contact</th>
@@ -180,19 +180,19 @@ export default function AdminUsersPage() {
                                 <th className="px-8 py-5 text-right">Managemnt</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                             {loading ? (
                                 <tr>
-                                    <td colSpan={6} className="px-8 py-32 text-center text-slate-400">
+                                    <td colSpan={6} className="px-8 py-32 text-center text-slate-500 dark:text-slate-400">
                                         <div className="flex flex-col items-center gap-3">
-                                            <Loader2 className="w-10 h-10 text-purple-500 animate-spin" />
+                                            <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
                                             <p className="font-bold text-sm tracking-widest uppercase">Fetching Records...</p>
                                         </div>
                                     </td>
                                 </tr>
                             ) : filteredUsers.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-8 py-32 text-center text-slate-400">
+                                    <td colSpan={6} className="px-8 py-32 text-center text-slate-500 dark:text-slate-400">
                                         <div className="flex flex-col items-center gap-3 opacity-50">
                                             <Users className="w-12 h-12" />
                                             <p className="font-bold text-sm tracking-widest uppercase">No matching users found</p>
@@ -203,13 +203,13 @@ export default function AdminUsersPage() {
                                 <tr key={u.id} className="hover:bg-white/[0.04] transition-all group">
                                     <td className="px-8 py-5">
                                         <div className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 font-black text-lg border border-white/5 overflow-hidden shrink-0 group-hover:scale-110 transition-transform">
+                                            <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-lg border border-slate-100 dark:border-slate-700 overflow-hidden shrink-0 group-hover:scale-110 transition-transform">
                                                 {u.profileImage
                                                     ? <img src={u.profileImage} alt={u.name} className="w-full h-full object-cover" />
                                                     : (u.name?.[0] || u.email[0]).toUpperCase()}
                                             </div>
                                             <div>
-                                                <p className="text-white font-black text-sm group-hover:text-purple-400 transition-colors uppercase tracking-tight">{u.name || 'Anonymous'}</p>
+                                                <p className="text-slate-900 dark:text-white font-bold text-sm group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors uppercase tracking-tight">{u.name || 'Anonymous'}</p>
                                                 <p className="text-slate-500 text-xs font-medium">{u.email}</p>
                                             </div>
                                         </div>
@@ -221,12 +221,12 @@ export default function AdminUsersPage() {
                                         </div>
                                     </td>
                                     <td className="px-8 py-5">
-                                        <p className="text-slate-400 text-sm font-bold tracking-tight">{u.phone && u.phone !== 'N/A' ? u.phone : '—'}</p>
-                                        <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest mt-0.5">Contact Number</p>
+                                        <p className="text-slate-500 dark:text-slate-400 text-sm font-bold tracking-tight">{u.phone && u.phone !== 'N/A' ? u.phone : '—'}</p>
+                                        <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest mt-0.5">Contact Number</p>
                                     </td>
                                     <td className="px-8 py-5">
                                         <span className={cn(
-                                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-lg",
+                                            "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border shadow-lg",
                                             u.status === 'Active'
                                                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-emerald-500/5"
                                                 : "bg-red-500/10 text-red-400 border-red-500/20 shadow-red-500/5"
@@ -236,23 +236,23 @@ export default function AdminUsersPage() {
                                         </span>
                                     </td>
                                     <td className="px-8 py-5">
-                                        <p className="text-slate-400 text-sm font-bold">
+                                        <p className="text-slate-500 dark:text-slate-400 text-sm font-bold">
                                             {u.joined ? new Date(u.joined).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) : '—'}
                                         </p>
-                                        <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest mt-0.5">Joined Date</p>
+                                        <p className="text-[10px] text-slate-600 font-bold uppercase tracking-widest mt-0.5">Joined Date</p>
                                     </td>
                                     <td className="px-8 py-5 text-right">
                                         <div className="flex items-center justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                                             <Link
                                                 href={`/admin/users/${u.id}`}
-                                                className="p-3 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-2xl border border-white/10 transition-all"
+                                                className="p-3 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-2xl border border-slate-200 dark:border-slate-700 transition-all"
                                                 title="Full Profile"
                                             >
                                                 <ChevronRight className="w-5 h-5" />
                                             </Link>
                                             <Link
                                                 href={`/admin/users/${u.id}/edit`}
-                                                className="p-3 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 rounded-2xl border border-indigo-500/20 transition-all font-black text-[10px] uppercase tracking-widest flex items-center gap-2"
+                                                className="p-3 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-200 dark:border-blue-800 transition-all font-bold text-[10px] uppercase tracking-widest flex items-center gap-2"
                                             >
                                                 <Edit3 className="w-4 h-4" /> Edit
                                             </Link>
@@ -272,22 +272,22 @@ export default function AdminUsersPage() {
                 </div>
 
                 {/* Pagination */}
-                <div className="p-8 border-t border-white/5 flex items-center justify-between bg-black/10">
-                    <div className="text-xs font-black text-slate-500 uppercase tracking-widest">
-                        Page <span className="text-white">{page}</span> of <span className="text-white">{pagination.totalPages || 1}</span>
+                <div className="p-8 border-t border-slate-100 dark:border-slate-700 flex items-center justify-between bg-black/10">
+                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                        Page <span className="text-slate-900 dark:text-white">{page}</span> of <span className="text-slate-900 dark:text-white">{pagination.totalPages || 1}</span>
                     </div>
                     <div className="flex gap-3">
                         <button
                             disabled={page === 1}
                             onClick={() => setPage(p => p - 1)}
-                            className="px-6 py-3 bg-white/5 hover:bg-white/10 disabled:opacity-30 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all text-slate-300"
+                            className="px-6 py-3 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-30 border border-slate-200 dark:border-slate-700 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all text-slate-600 dark:text-slate-300"
                         >
                             Previous
                         </button>
                         <button
                             disabled={page >= pagination.totalPages}
                             onClick={() => setPage(p => p + 1)}
-                            className="px-6 py-3 bg-purple-600 hover:bg-purple-500 disabled:opacity-30 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all text-white shadow-lg shadow-purple-600/20"
+                            className="px-6 py-3 bg-blue-600 hover:bg-blue-500 disabled:opacity-30 rounded-2xl text-[10px] font-bold uppercase tracking-widest transition-all text-white shadow-lg shadow-blue-600/20"
                         >
                             Next Page
                         </button>

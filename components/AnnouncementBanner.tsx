@@ -45,7 +45,7 @@ export function AnnouncementBanner() {
         <div className={cn(
             "relative w-full overflow-hidden transition-all duration-500 animate-in slide-in-from-top",
             current.type === 'URGENT' ? "bg-red-600" :
-                current.type === 'WARNING' ? "bg-amber-500" : "bg-indigo-600"
+                current.type === 'WARNING' ? "bg-amber-500" : "bg-blue-600"
         )}>
             <div className="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between flex-wrap">
@@ -58,7 +58,7 @@ export function AnnouncementBanner() {
                         <p className="ml-3 font-bold text-white truncate">
                             <span className="md:hidden">{current.title}</span>
                             <span className="hidden md:inline">
-                                <span className="font-black uppercase tracking-wider text-[10px] bg-white/20 px-2 py-0.5 rounded mr-2">
+                                <span className="font-bold uppercase tracking-wider text-[10px] bg-white/20 px-2 py-0.5 rounded mr-2">
                                     {current.type}
                                 </span>
                                 {current.title}: {current.content}
@@ -69,7 +69,7 @@ export function AnnouncementBanner() {
                         {activeAnnouncements.length > 1 && (
                             <button
                                 onClick={() => setCurrentIndex((currentIndex + 1) % activeAnnouncements.length)}
-                                className="flex items-center gap-1 text-[10px] font-black text-white/80 hover:text-white uppercase tracking-widest px-2 py-1 rounded bg-white/10"
+                                className="flex items-center gap-1 text-[10px] font-bold text-white/80 hover:text-white uppercase tracking-widest px-2 py-1 rounded bg-white/10"
                             >
                                 Next ({currentIndex + 1}/{activeAnnouncements.length}) <ChevronRight className="w-3 h-3" />
                             </button>

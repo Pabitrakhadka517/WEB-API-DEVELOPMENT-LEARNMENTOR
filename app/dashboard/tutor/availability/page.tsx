@@ -69,7 +69,7 @@ export default function TutorAvailabilityPage() {
         return (
             <div className="flex h-[60vh] flex-col items-center justify-center text-center">
                 <Shield className="w-16 h-16 text-red-500 mb-4 opacity-50" />
-                <h1 className="text-2xl font-bold text-white">Access Denied</h1>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Access Denied</h1>
             </div>
         );
     }
@@ -148,14 +148,14 @@ export default function TutorAvailabilityPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <p className="text-indigo-400 text-sm font-bold uppercase tracking-widest mb-1">Schedule</p>
-                    <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">Availability Calendar</h1>
-                    <p className="text-slate-400">Set your available time slots and block days off.</p>
+                    <p className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-widest mb-1">Schedule</p>
+                    <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">Availability Calendar</h1>
+                    <p className="text-slate-500 dark:text-slate-400">Set your available time slots and block days off.</p>
                 </div>
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-indigo-600/20 disabled:opacity-50"
+                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 disabled:opacity-50"
                 >
                     {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {saving ? 'Saving...' : 'Save Availability'}
@@ -164,22 +164,22 @@ export default function TutorAvailabilityPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Calendar */}
-                <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-2xl p-6">
+                <div className="lg:col-span-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6">
                     {/* Month Navigation */}
                     <div className="flex items-center justify-between mb-6">
-                        <button onClick={prevMonth} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
-                            <ChevronLeft className="w-5 h-5 text-slate-400" />
+                        <button onClick={prevMonth} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                            <ChevronLeft className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                         </button>
-                        <h2 className="text-xl font-bold text-white">{MONTHS[month]} {year}</h2>
-                        <button onClick={nextMonth} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
-                            <ChevronRight className="w-5 h-5 text-slate-400" />
+                        <h2 className="text-xl font-bold text-slate-900 dark:text-white">{MONTHS[month]} {year}</h2>
+                        <button onClick={nextMonth} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                            <ChevronRight className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                         </button>
                     </div>
 
                     {/* Day Headers */}
                     <div className="grid grid-cols-7 mb-2">
                         {DAYS.map(d => (
-                            <div key={d} className="text-center text-xs font-black text-slate-500 uppercase tracking-widest py-2">{d}</div>
+                            <div key={d} className="text-center text-xs font-bold text-slate-500 uppercase tracking-widest py-2">{d}</div>
                         ))}
                     </div>
 
@@ -208,17 +208,17 @@ export default function TutorAvailabilityPage() {
                                     className={cn(
                                         "relative aspect-square flex flex-col items-center justify-center rounded-xl text-sm font-bold transition-all",
                                         isPast && "opacity-30 cursor-not-allowed",
-                                        isSelected && "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30",
-                                        isToday && !isSelected && "bg-white/10 text-white border border-indigo-500/50",
+                                        isSelected && "bg-blue-600 text-white shadow-lg shadow-blue-600/30",
+                                        isToday && !isSelected && "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white border border-blue-500/50",
                                         blocked && !isSelected && "bg-red-500/10 text-red-400",
-                                        !isSelected && !isToday && !blocked && !isPast && "text-slate-300 hover:bg-white/10"
+                                        !isSelected && !isToday && !blocked && !isPast && "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                                     )}
                                 >
                                     {day}
                                     {slotCount > 0 && !blocked && (
                                         <div className={cn(
                                             "absolute bottom-1 w-1.5 h-1.5 rounded-full",
-                                            isSelected ? "bg-white" : "bg-indigo-400"
+                                            isSelected ? "bg-white" : "bg-blue-400"
                                         )} />
                                     )}
                                     {blocked && (
@@ -230,11 +230,11 @@ export default function TutorAvailabilityPage() {
                     </div>
 
                     {/* Legend */}
-                    <div className="flex items-center gap-6 mt-5 pt-5 border-t border-white/10">
+                    <div className="flex items-center gap-6 mt-5 pt-5 border-t border-slate-200 dark:border-slate-700">
                         {[
-                            { color: 'bg-indigo-400', label: 'Has slots' },
+                            { color: 'bg-blue-400', label: 'Has slots' },
                             { color: 'bg-red-400', label: 'Blocked' },
-                            { color: 'bg-white/30', label: 'Today' },
+                            { color: 'bg-slate-200 dark:bg-white/30', label: 'Today' },
                         ].map(item => (
                             <div key={item.label} className="flex items-center gap-2">
                                 <div className={cn("w-2.5 h-2.5 rounded-full", item.color)} />
@@ -245,7 +245,7 @@ export default function TutorAvailabilityPage() {
                 </div>
 
                 {/* Slot Manager */}
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6">
                     {!selectedDate ? (
                         <div className="flex flex-col items-center justify-center h-full text-slate-500 py-10">
                             <Calendar className="w-12 h-12 mb-4 opacity-40" />
@@ -255,7 +255,7 @@ export default function TutorAvailabilityPage() {
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="font-bold text-white">
+                                    <h3 className="font-bold text-slate-900 dark:text-white">
                                         {new Date(selectedDate + 'T12:00:00').toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' })}
                                     </h3>
                                     <p className="text-xs text-slate-500 mt-0.5">{selectedSlots.length} slot(s) set</p>
@@ -266,7 +266,7 @@ export default function TutorAvailabilityPage() {
                                         "px-3 py-1.5 rounded-xl text-xs font-bold transition-all border",
                                         isBlocked
                                             ? "bg-red-500/10 text-red-400 border-red-500/20 hover:bg-red-500/20"
-                                            : "bg-white/5 text-slate-400 border-white/10 hover:bg-white/10"
+                                            : "bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
                                     )}
                                 >
                                     {isBlocked ? '🔓 Unblock Day' : '🚫 Block Day'}
@@ -283,9 +283,9 @@ export default function TutorAvailabilityPage() {
                                     {/* Existing Slots */}
                                     <div className="space-y-2">
                                         {selectedSlots.map(slot => (
-                                            <div key={slot.id} className="flex items-center gap-3 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl">
-                                                <Clock className="w-4 h-4 text-indigo-400 shrink-0" />
-                                                <span className="text-sm font-bold text-white flex-1">
+                                            <div key={slot.id} className="flex items-center gap-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
+                                                <Clock className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                                                <span className="text-sm font-bold text-slate-900 dark:text-white flex-1">
                                                     {slot.startTime} – {slot.endTime}
                                                 </span>
                                                 <button
@@ -300,17 +300,17 @@ export default function TutorAvailabilityPage() {
 
                                     {/* Add Slot Form */}
                                     {showAddSlot ? (
-                                        <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
-                                            <p className="text-sm font-bold text-white">Add Time Slot</p>
+                                        <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 space-y-3">
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white">Add Time Slot</p>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <div>
                                                     <label className="text-xs text-slate-500 font-bold uppercase mb-1 block">Start</label>
                                                     <select
                                                         value={newSlot.startTime}
                                                         onChange={e => setNewSlot(p => ({ ...p, startTime: e.target.value }))}
-                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                                                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                                                     >
-                                                        {TIME_OPTIONS.map(t => <option key={t} value={t} className="bg-slate-900">{t}</option>)}
+                                                        {TIME_OPTIONS.map(t => <option key={t} value={t} className="bg-white dark:bg-slate-900">{t}</option>)}
                                                     </select>
                                                 </div>
                                                 <div>
@@ -318,17 +318,17 @@ export default function TutorAvailabilityPage() {
                                                     <select
                                                         value={newSlot.endTime}
                                                         onChange={e => setNewSlot(p => ({ ...p, endTime: e.target.value }))}
-                                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                                                        className="w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                                                     >
-                                                        {TIME_OPTIONS.map(t => <option key={t} value={t} className="bg-slate-900">{t}</option>)}
+                                                        {TIME_OPTIONS.map(t => <option key={t} value={t} className="bg-white dark:bg-slate-900">{t}</option>)}
                                                     </select>
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
-                                                <button onClick={addSlot} className="flex-1 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-bold transition-all">
+                                                <button onClick={addSlot} className="flex-1 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold transition-all">
                                                     Add Slot
                                                 </button>
-                                                <button onClick={() => setShowAddSlot(false)} className="px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-400 rounded-lg transition-all">
+                                                <button onClick={() => setShowAddSlot(false)} className="px-3 py-2 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 rounded-lg transition-all">
                                                     <X className="w-4 h-4" />
                                                 </button>
                                             </div>
@@ -336,7 +336,7 @@ export default function TutorAvailabilityPage() {
                                     ) : (
                                         <button
                                             onClick={() => setShowAddSlot(true)}
-                                            className="w-full py-3 border-2 border-dashed border-white/10 hover:border-indigo-500/40 text-slate-400 hover:text-indigo-400 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2"
+                                            className="w-full py-3 border-2 border-dashed border-slate-200 dark:border-slate-700 hover:border-blue-400/40 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2"
                                         >
                                             <Plus className="w-4 h-4" /> Add Time Slot
                                         </button>
@@ -349,8 +349,8 @@ export default function TutorAvailabilityPage() {
             </div>
 
             {/* Weekly Schedule Summary */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                <h2 className="text-xl font-bold text-white mb-5">This Week's Schedule</h2>
+            <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-5">This Week's Schedule</h2>
                 <div className="grid grid-cols-7 gap-2">
                     {DAYS.map((day, i) => {
                         const now = new Date();
@@ -363,14 +363,14 @@ export default function TutorAvailabilityPage() {
                         return (
                             <div key={day} className={cn(
                                 "rounded-xl p-3 text-center",
-                                blocked ? "bg-red-500/10 border border-red-500/20" : daySlots.length > 0 ? "bg-indigo-500/10 border border-indigo-500/20" : "bg-white/5 border border-white/5"
+                                blocked ? "bg-red-500/10 border border-red-500/20" : daySlots.length > 0 ? "bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800" : "bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700"
                             )}>
-                                <p className="text-xs font-black text-slate-500 uppercase mb-2">{day}</p>
-                                <p className="text-sm font-bold text-white">{dayDate.getDate()}</p>
+                                <p className="text-xs font-bold text-slate-500 uppercase mb-2">{day}</p>
+                                <p className="text-sm font-bold text-slate-900 dark:text-white">{dayDate.getDate()}</p>
                                 {blocked ? (
                                     <p className="text-[10px] text-red-400 mt-1">Blocked</p>
                                 ) : daySlots.length > 0 ? (
-                                    <p className="text-[10px] text-indigo-400 mt-1">{daySlots.length} slot{daySlots.length > 1 ? 's' : ''}</p>
+                                    <p className="text-[10px] text-blue-600 dark:text-blue-400 mt-1">{daySlots.length} slot{daySlots.length > 1 ? 's' : ''}</p>
                                 ) : (
                                     <p className="text-[10px] text-slate-600 mt-1">Free</p>
                                 )}

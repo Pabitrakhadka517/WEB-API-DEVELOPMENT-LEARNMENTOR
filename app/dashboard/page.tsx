@@ -24,7 +24,7 @@ export default function DashboardHome() {
 
   return (
     <div className="flex h-[60vh] items-center justify-center flex-col space-y-4">
-      <Loader2 className="w-12 h-12 text-indigo-500 animate-spin" />
+      <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
       <p className="text-slate-400 font-medium animate-pulse">Redirecting to your dashboard...</p>
     </div>
   );

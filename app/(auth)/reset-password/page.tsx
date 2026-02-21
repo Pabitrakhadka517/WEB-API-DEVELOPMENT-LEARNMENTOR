@@ -74,14 +74,14 @@ function ResetPasswordContent() {
                     </div>
                 </div>
                 <div className="space-y-2">
-                    <h1 className="text-2xl font-black text-white">Password reset!</h1>
-                    <p className="text-slate-400">
+                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Password reset!</h1>
+                    <p className="text-slate-500 dark:text-slate-400">
                         Your password has been successfully updated. Redirecting to login...
                     </p>
                 </div>
                 <Link
                     href="/login"
-                    className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
+                    className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-300 hover:underline transition-colors"
                 >
                     Back to login now <ArrowLeft className="w-4 h-4 rotate-180" />
                 </Link>
@@ -92,8 +92,8 @@ function ResetPasswordContent() {
     return (
         <div className="w-full max-w-md mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-2">
-                <h1 className="text-3xl font-black text-white">Set new password</h1>
-                <p className="text-slate-400">
+                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Set new password</h1>
+                <p className="text-slate-500 dark:text-slate-400">
                     Must be at least 8 characters with numbers and symbols.
                 </p>
             </div>
@@ -105,7 +105,7 @@ function ResetPasswordContent() {
                     </div>
                     <Link
                         href="/forgot-password"
-                        className="inline-flex items-center gap-2 text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors"
+                        className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-300 hover:underline transition-colors"
                     >
                         <ArrowLeft className="w-4 h-4" /> Request new link
                     </Link>
@@ -113,23 +113,23 @@ function ResetPasswordContent() {
             ) : (
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                     <div className="space-y-2">
-                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">
                             New Password
                         </label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
                                 <Lock className="w-5 h-5" />
                             </div>
                             <input
                                 {...register('password')}
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="••••••••"
-                                className="block w-full pl-11 pr-12 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-all"
+                                className="block w-full pl-11 pr-12 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/40 transition-all"
                             />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
+                                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                             >
                                 {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                             </button>
@@ -140,18 +140,18 @@ function ResetPasswordContent() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-xs font-black text-slate-500 uppercase tracking-widest ml-1">
+                        <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">
                             Confirm Password
                         </label>
                         <div className="relative group">
-                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-indigo-400 transition-colors">
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500 group-focus-within:text-blue-400 transition-colors">
                                 <Lock className="w-5 h-5" />
                             </div>
                             <input
                                 {...register('confirmPassword')}
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="••••••••"
-                                className="block w-full pl-11 pr-12 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/40 transition-all"
+                                className="block w-full pl-11 pr-12 py-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/40 transition-all"
                             />
                         </div>
                         {errors.confirmPassword && (
@@ -169,7 +169,7 @@ function ResetPasswordContent() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="w-full py-4 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-indigo-600/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-2xl font-bold text-sm uppercase tracking-widest shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                     >
                         {isLoading ? (
                             <>
@@ -190,8 +190,8 @@ export default function ResetPasswordPage() {
     return (
         <Suspense fallback={
             <div className="flex flex-col items-center justify-center space-y-4">
-                <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
-                <p className="text-slate-400 font-bold">Loading...</p>
+                <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
+                <p className="text-slate-500 dark:text-slate-400 font-bold">Loading...</p>
             </div>
         }>
             <ResetPasswordContent />

@@ -52,20 +52,20 @@ export default function StatusPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-md p-8 max-w-md w-full border border-slate-200">
+        <h1 className="text-2xl font-bold text-slate-900 mb-6 text-center">
           System Status Check
         </h1>
         
         <div className="space-y-4">
-          <div className="border rounded-lg p-4">
-            <h3 className="font-semibold text-gray-700 mb-2">Backend Health</h3>
+          <div className="border border-slate-200 rounded-lg p-4">
+            <h3 className="font-semibold text-slate-700 mb-2">Backend Health</h3>
             <p className="text-sm">{backendStatus}</p>
           </div>
           
-          <div className="border rounded-lg p-4">
-            <h3 className="font-semibold text-gray-700 mb-2">API Functionality</h3>
+          <div className="border border-slate-200 rounded-lg p-4">
+            <h3 className="font-semibold text-slate-700 mb-2">API Functionality</h3>
             <p className="text-sm">{apiStatus}</p>
           </div>
           
@@ -100,7 +100,7 @@ export default function StatusPage() {
         <div className="mt-6 text-center">
           <a
             href="/register"
-            className="text-blue-600 hover:text-blue-800 text-sm"
+            className="text-blue-600 hover:text-blue-800 hover:underline text-sm"
           >
             Go to Registration →
           </a>

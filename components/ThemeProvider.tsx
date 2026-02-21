@@ -1,8 +1,7 @@
 'use client';
 
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext } from 'react';
 import { useThemeStore } from '../store/theme-store';
-import { useAuthStore } from '../store/auth-store';
 
 interface ThemeContextType {
     theme: 'light' | 'dark' | 'system';
@@ -27,14 +26,11 @@ interface ThemeProviderProps {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const { theme, resolvedTheme, setTheme, toggleTheme } = useThemeStore();
-    const { user } = useAuthStore();
 
-    // Sync user theme preference when user logs in
-    useEffect(() => {
-        if (user?.theme && user.theme !== theme) {
-            setTheme(user.theme as 'light' | 'dark' | 'system');
-        }
-    }, [user?.theme, theme, setTheme]);
+    // Theme is managed entirely by the local theme-store (persisted in localStorage).
+    // The store already syncs changes to the backend via PATCH /api/profile/theme.
+    // We intentionally do NOT sync user.theme from backend on profile fetch,
+    // as that would override the user's local preference every time they visit profile.
 
     const contextValue: ThemeContextType = {
         theme,

@@ -65,7 +65,7 @@ export default function MessagesPage() {
                             if (currentUser && res.accessToken && !cancelled) {
                                 useAuthStore.getState().setAuth(currentUser, res.accessToken, refreshToken);
                                 // Update socket auth and reconnect with fresh token
-                                newSocket.auth = { token: res.accessToken };
+                                (newSocket as any).auth = { token: res.accessToken };
                                 newSocket.connect();
                             }
                         } catch {
@@ -234,20 +234,20 @@ export default function MessagesPage() {
     });
 
     return (
-        <div className="flex h-[calc(100vh-140px)] bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+        <div className="flex h-[calc(100vh-140px)] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
             {/* Sidebar / Chat List */}
             <div className={cn(
-                "w-full md:w-80 border-r border-white/10 flex flex-col bg-[#0f172a]/30",
+                "w-full md:w-80 border-r border-slate-200 dark:border-slate-700 flex flex-col bg-white dark:bg-slate-900",
                 selectedChat ? "hidden md:flex" : "flex"
             )}>
-                <div className="p-4 border-b border-white/10">
-                    <h2 className="text-xl font-bold text-white mb-4">Messages</h2>
+                <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Messages</h2>
                     <div className="relative">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500" />
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-500 dark:text-slate-400" />
                         <input
                             type="text"
                             placeholder="Search conversations..."
-                            className="w-full bg-[#0b0f1a] border border-white/10 rounded-xl pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl pl-9 pr-4 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
@@ -257,10 +257,10 @@ export default function MessagesPage() {
                 <div className="flex-1 overflow-y-auto">
                     {loadingChats ? (
                         <div className="flex justify-center py-8">
-                            <Loader2 className="w-6 h-6 text-indigo-500 animate-spin" />
+                            <Loader2 className="w-6 h-6 text-blue-500 animate-spin" />
                         </div>
                     ) : filteredChats.length === 0 ? (
-                        <div className="p-4 text-center text-slate-500 text-sm">
+                        <div className="p-4 text-center text-slate-500 dark:text-slate-400 text-sm">
                             No conversations found.
                         </div>
                     ) : (
@@ -274,12 +274,12 @@ export default function MessagesPage() {
                                     key={chat._id}
                                     onClick={() => setSelectedChat(chat)}
                                     className={cn(
-                                        "w-full p-4 flex items-start space-x-3 hover:bg-white/5 transition-colors text-left",
-                                        isActive && "bg-white/5 border-l-2 border-indigo-500"
+                                        "w-full p-4 flex items-start space-x-3 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-left",
+                                        isActive && "bg-slate-100 dark:bg-slate-800 border-l-2 border-blue-500"
                                     )}
                                 >
                                     <div className="relative">
-                                        <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold overflow-hidden">
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold overflow-hidden">
                                             {other.profileImage ? (
                                                 <img src={other.profileImage} alt={other.fullName} className="w-full h-full object-cover" />
                                             ) : (
@@ -289,21 +289,21 @@ export default function MessagesPage() {
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex justify-between items-baseline mb-1">
-                                            <h3 className="font-semibold text-white truncate">{other.fullName}</h3>
+                                            <h3 className="font-semibold text-slate-900 dark:text-white truncate">{other.fullName}</h3>
                                             {chat.lastMessageAt && (
-                                                <span className="text-xs text-slate-500">{formatTime(chat.lastMessageAt)}</span>
+                                                <span className="text-xs text-slate-500 dark:text-slate-400">{formatTime(chat.lastMessageAt)}</span>
                                             )}
                                         </div>
                                         <p className={cn(
                                             "text-sm truncate",
-                                            isActive ? "text-slate-300" : "text-slate-400",
-                                            chat.unreadCount > 0 && "font-semibold text-white"
+                                            isActive ? "text-slate-600 dark:text-slate-300" : "text-slate-500 dark:text-slate-400",
+                                            chat.unreadCount > 0 && "font-semibold text-slate-900 dark:text-white"
                                         )}>
                                             {lastMsg}
                                         </p>
                                     </div>
                                     {chat.unreadCount > 0 && (
-                                        <div className="w-5 h-5 rounded-full bg-indigo-600 flex items-center justify-center text-[10px] font-bold text-white">
+                                        <div className="w-5 h-5 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white">
                                             {chat.unreadCount}
                                         </div>
                                     )}
@@ -316,17 +316,17 @@ export default function MessagesPage() {
 
             {/* Chat Area */}
             <div className={cn(
-                "flex-1 flex flex-col bg-[#0b0f1a]/50",
+                "flex-1 flex flex-col bg-white dark:bg-slate-900",
                 !selectedChat ? "hidden md:flex" : "flex"
             )}>
                 {selectedChat ? (
                     <>
                         {/* Chat Header */}
-                        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-[#0f172a]/50 backdrop-blur-sm">
+                        <div className="p-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-white dark:bg-slate-900 backdrop-blur-sm">
                             <div className="flex items-center space-x-3">
                                 <button
                                     onClick={() => setSelectedChat(null)}
-                                    className="md:hidden p-2 -ml-2 text-slate-400 hover:text-white"
+                                    className="md:hidden p-2 -ml-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
                                 >
                                     <ArrowLeft className="w-5 h-5" />
                                 </button>
@@ -334,7 +334,7 @@ export default function MessagesPage() {
                                     const other = getOtherParticipant(selectedChat);
                                     return (
                                         <>
-                                            <div className="w-10 h-10 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold overflow-hidden">
+                                            <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold overflow-hidden">
                                                 {other.profileImage ? (
                                                     <img src={other.profileImage} alt={other.fullName} className="w-full h-full object-cover" />
                                                 ) : (
@@ -342,9 +342,9 @@ export default function MessagesPage() {
                                                 )}
                                             </div>
                                             <div>
-                                                <h3 className="font-bold text-white">{other.fullName}</h3>
-                                                <span className="text-xs text-emerald-400 flex items-center">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>
+                                                <h3 className="font-bold text-slate-900 dark:text-white">{other.fullName}</h3>
+                                                <span className="text-xs text-emerald-600 dark:text-emerald-400 flex items-center">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400 mr-1.5"></span>
                                                     Online
                                                 </span>
                                             </div>
@@ -352,7 +352,7 @@ export default function MessagesPage() {
                                     );
                                 })()}
                             </div>
-                            <button className="p-2 text-slate-400 hover:text-white rounded-full hover:bg-white/10">
+                            <button className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-700">
                                 <MoreVertical className="w-5 h-5" />
                             </button>
                         </div>
@@ -361,10 +361,10 @@ export default function MessagesPage() {
                         <div className="flex-1 overflow-y-auto p-4 space-y-4">
                             {loadingMessages ? (
                                 <div className="flex justify-center py-10">
-                                    <Loader2 className="w-8 h-8 text-indigo-500 animate-spin" />
+                                    <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
                                 </div>
                             ) : messages.length === 0 ? (
-                                <div className="flex flex-col items-center justify-center h-full text-slate-500 opacity-50">
+                                <div className="flex flex-col items-center justify-center h-full text-slate-500 dark:text-slate-400 opacity-50">
                                     <MessageCircle className="w-16 h-16 mb-4" />
                                     <p>No messages yet. Say hello!</p>
                                 </div>
@@ -378,13 +378,13 @@ export default function MessagesPage() {
                                             <div className={cn(
                                                 "max-w-[75%] rounded-2xl px-4 py-3 text-sm",
                                                 isMe
-                                                    ? "bg-indigo-600 text-white rounded-tr-none"
-                                                    : "bg-white/10 text-white rounded-tl-none"
+                                                    ? "bg-blue-600 text-white rounded-tr-none"
+                                                    : "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded-tl-none"
                                             )}>
                                                 <p>{msg.message}</p>
                                                 <div className={cn(
                                                     "text-[10px] mt-1 flex items-center justify-end opacity-70",
-                                                    isMe ? "text-indigo-200" : "text-slate-400"
+                                                    isMe ? "text-blue-200" : "text-slate-500 dark:text-slate-400"
                                                 )}>
                                                     {formatTime(msg.createdAt)}
                                                     {isMe && (
@@ -400,9 +400,9 @@ export default function MessagesPage() {
                         </div>
 
                         {/* Input Area */}
-                        <div className="p-4 border-t border-white/10 bg-[#0f172a]/50 backdrop-blur-sm">
+                        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 backdrop-blur-sm">
                             <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
-                                <button type="button" className="p-2 text-slate-400 hover:text-white rounded-full hover:bg-white/10">
+                                <button type="button" className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-700">
                                     <Paperclip className="w-5 h-5" />
                                 </button>
                                 <input
@@ -410,12 +410,12 @@ export default function MessagesPage() {
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     placeholder="Type a message..."
-                                    className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+                                    className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                                 />
                                 <button
                                     type="submit"
                                     disabled={!newMessage.trim()}
-                                    className="p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    className="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     <Send className="w-5 h-5" />
                                 </button>
@@ -423,11 +423,11 @@ export default function MessagesPage() {
                         </div>
                     </>
                 ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-slate-500">
-                        <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6">
+                    <div className="flex flex-col items-center justify-center h-full text-slate-500 dark:text-slate-400">
+                        <div className="w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-6">
                             <MessageCircle className="w-10 h-10 opacity-50" />
                         </div>
-                        <h3 className="text-xl font-bold text-white mb-2">Select a conversation</h3>
+                        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Select a conversation</h3>
                         <p className="max-w-xs text-center">Refer to the list on the left to view your messages or start a new chat.</p>
                     </div>
                 )}

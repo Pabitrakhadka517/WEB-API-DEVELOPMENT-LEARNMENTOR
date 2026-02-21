@@ -17,7 +17,7 @@ function AdminDashboardContent() {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
                     <p className="text-gray-600">Loading dashboard...</p>
                 </div>
             </div>
@@ -48,7 +48,7 @@ function AdminDashboardContent() {
 
                 <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="text-gray-500 text-sm font-medium mb-2">Tutors</h3>
-                    <p className="text-3xl font-bold text-indigo-600">{stats?.totalTutors || 0}</p>
+                    <p className="text-3xl font-bold text-blue-600">{stats?.totalTutors || 0}</p>
                 </div>
 
                 <div className="bg-white rounded-lg shadow p-6">
@@ -58,7 +58,7 @@ function AdminDashboardContent() {
 
                 <div className="bg-white rounded-lg shadow p-6">
                     <h3 className="text-gray-500 text-sm font-medium mb-2">Admins</h3>
-                    <p className="text-3xl font-bold text-purple-600">{stats?.totalAdmins || 0}</p>
+                    <p className="text-3xl font-bold text-blue-600">{stats?.totalAdmins || 0}</p>
                 </div>
             </div>
 
@@ -102,8 +102,8 @@ function AdminDashboardContent() {
                                                         alt={user.name || 'User'}
                                                     />
                                                 ) : (
-                                                    <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                                        <span className="text-indigo-600 font-medium">
+                                                    <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                                        <span className="text-blue-600 font-medium">
                                                             {user.name?.[0]?.toUpperCase() || user.email[0].toUpperCase()}
                                                         </span>
                                                     </div>
@@ -122,9 +122,9 @@ function AdminDashboardContent() {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span
                                             className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin'
-                                                    ? 'bg-purple-100 text-purple-800'
+                                                    ? 'bg-blue-100 text-blue-800'
                                                     : user.role === 'tutor'
-                                                        ? 'bg-indigo-100 text-indigo-800'
+                                                        ? 'bg-blue-100 text-blue-800'
                                                         : 'bg-green-100 text-green-800'
                                                 }`}
                                         >

@@ -74,15 +74,15 @@ function PaymentSuccessContent() {
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-            <div className="max-w-md w-full bg-white/5 border border-white/10 rounded-3xl p-10 shadow-2xl">
+            <div className="max-w-md w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-10 shadow-lg">
                 {status === 'verifying' && (
                     <div className="space-y-6">
-                        <div className="w-20 h-20 bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto">
-                            <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+                        <div className="w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mx-auto">
+                            <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-white mb-2">Verifying Payment</h2>
-                            <p className="text-slate-400">{message}</p>
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Verifying Payment</h2>
+                            <p className="text-slate-500 dark:text-slate-400">{message}</p>
                         </div>
                     </div>
                 )}
@@ -93,8 +93,8 @@ function PaymentSuccessContent() {
                             <CheckCircle className="w-10 h-10 text-emerald-500" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-white mb-2">Payment Complete!</h2>
-                            <p className="text-slate-400 mb-8">{message}</p>
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Payment Complete!</h2>
+                            <p className="text-slate-500 dark:text-slate-400 mb-8">{message}</p>
                             <div className="flex flex-col gap-3">
                                 <button
                                     onClick={() => router.push('/dashboard/messages')}
@@ -105,7 +105,7 @@ function PaymentSuccessContent() {
                                 </button>
                                 <button
                                     onClick={() => router.push('/dashboard/bookings')}
-                                    className="flex items-center justify-center w-full py-4 bg-white/5 hover:bg-white/10 text-white rounded-2xl font-bold transition-all border border-white/10"
+                                    className="flex items-center justify-center w-full py-4 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-2xl font-bold transition-all border border-slate-200 dark:border-slate-700"
                                 >
                                     View My Bookings
                                     <ArrowRight className="w-5 h-5 ml-2" />
@@ -121,18 +121,18 @@ function PaymentSuccessContent() {
                             <AlertCircle className="w-10 h-10 text-red-500" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-bold text-white mb-2">Verification Failed</h2>
-                            <p className="text-red-400 mb-8">{message}</p>
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Verification Failed</h2>
+                            <p className="text-red-600 dark:text-red-400 mb-8">{message}</p>
                             <div className="flex flex-col gap-3">
                                 <button
                                     onClick={() => window.location.reload()}
-                                    className="py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl font-semibold transition-all border border-white/10"
+                                    className="py-3 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-900 dark:text-white rounded-xl font-semibold transition-all border border-slate-200 dark:border-slate-700"
                                 >
                                     Retry Verification
                                 </button>
                                 <button
                                     onClick={() => router.push('/dashboard/bookings')}
-                                    className="py-3 text-slate-400 hover:text-white transition-all flex items-center justify-center"
+                                    className="py-3 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all flex items-center justify-center"
                                 >
                                     Return to My Bookings
                                 </button>
@@ -149,7 +149,7 @@ export default function PaymentSuccessPage() {
     return (
         <Suspense fallback={
             <div className="flex h-[60vh] items-center justify-center">
-                <Loader2 className="w-10 h-10 text-indigo-500 animate-spin" />
+                <Loader2 className="w-10 h-10 text-blue-500 animate-spin" />
             </div>
         }>
             <PaymentSuccessContent />

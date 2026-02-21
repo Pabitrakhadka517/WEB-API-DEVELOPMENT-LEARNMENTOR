@@ -15,20 +15,20 @@ import { transactionService, Transaction } from '@/services/transaction.service'
 import Link from 'next/link';
 
 // Donut chart for earnings
-const DonutChart = ({ percentage, color = '#6366f1' }: { percentage: number; color?: string }) => {
+const DonutChart = ({ percentage, color = '#2563eb' }: { percentage: number; color?: string }) => {
     const r = 36, cx = 44, cy = 44;
     const circ = 2 * Math.PI * r;
     const dash = (percentage / 100) * circ;
     return (
         <svg width="88" height="88" viewBox="0 0 88 88">
-            <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="10" />
+            <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(148,163,184,0.3)" strokeWidth="10" />
             <circle
                 cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="10"
                 strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
                 transform={`rotate(-90 ${cx} ${cy})`}
                 style={{ transition: 'stroke-dasharray 0.8s ease' }}
             />
-            <text x={cx} y={cy + 5} textAnchor="middle" fill="white" fontSize="13" fontWeight="bold">{percentage}%</text>
+            <text x={cx} y={cy + 5} textAnchor="middle" fill="currentColor" className="text-slate-900 dark:text-white" fontSize="13" fontWeight="bold">{percentage}%</text>
         </svg>
     );
 };
@@ -41,10 +41,10 @@ const BarChart = ({ data }: { data: { label: string; value: number }[] }) => {
             {data.map((d, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
                     <div
-                        className="w-full bg-indigo-500/70 hover:bg-indigo-500 rounded-t-sm transition-all duration-500"
+                        className="w-full bg-blue-500/70 hover:bg-blue-500 rounded-t-sm transition-all duration-500"
                         style={{ height: `${(d.value / max) * 64}px`, minHeight: d.value > 0 ? '4px' : '0' }}
                     />
-                    <span className="text-[9px] text-slate-500 font-bold">{d.label}</span>
+                    <span className="text-[9px] text-slate-500 dark:text-slate-400 font-bold">{d.label}</span>
                 </div>
             ))}
         </div>
@@ -93,8 +93,8 @@ export default function TutorDashboard() {
         return (
             <div className="flex h-[60vh] flex-col items-center justify-center text-center">
                 <Shield className="w-16 h-16 text-red-500 mb-4 opacity-50" />
-                <h1 className="text-2xl font-bold text-white">Access Denied</h1>
-                <p className="text-slate-400 max-w-md mt-2">This area is restricted to Tutors only.</p>
+                <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Access Denied</h1>
+                <p className="text-slate-500 dark:text-slate-400 max-w-md mt-2">This area is restricted to Tutors only.</p>
             </div>
         );
     }
@@ -104,7 +104,7 @@ export default function TutorDashboard() {
     const isPending = user?.verificationStatus === 'PENDING';
 
     const statCards = [
-        { label: 'Total Students', value: stats?.totalBookings ?? '—', icon: Users, color: 'from-blue-500 to-indigo-600', change: '+2 this week' },
+        { label: 'Total Students', value: stats?.totalBookings ?? '—', icon: Users, color: 'from-blue-500 to-blue-600', change: '+2 this week' },
         { label: 'Pending Requests', value: stats?.pendingBookings ?? '—', icon: AlertCircle, color: 'from-amber-500 to-orange-500', change: 'Needs action' },
         { label: 'Sessions Done', value: stats?.completedBookings ?? '—', icon: CheckCircle2, color: 'from-emerald-500 to-teal-600', change: 'All time' },
         { label: 'Avg Rating', value: stats?.averageRating ? `${stats.averageRating.toFixed(1)}★` : '—', icon: Star, color: 'from-amber-400 to-yellow-500', change: 'From reviews' },
@@ -164,19 +164,22 @@ export default function TutorDashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <p className="text-emerald-400 text-sm font-bold uppercase tracking-widest mb-1">Tutor Hub</p>
-                    <h1 className="text-4xl font-extrabold text-white mb-2 tracking-tight">
+                    <div className="flex items-center gap-2 mb-1">
+                        <img src="/learnmentor.png" alt="LearnMentor" className="w-5 h-5 object-contain" />
+                        <p className="text-emerald-600 dark:text-emerald-400 text-sm font-bold uppercase tracking-widest">Tutor Hub</p>
+                    </div>
+                    <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">
                         Welcome, {user?.name?.split(' ')[0] || 'Teacher'}! <span className="animate-bounce inline-block">👨‍🏫</span>
                     </h1>
-                    <p className="text-slate-400 text-lg font-medium">Manage your students, sessions, and earnings.</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-lg font-medium">Manage your students, sessions, and earnings.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Link href="/dashboard/tutor/availability" className="hidden md:flex px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-bold transition-all text-sm shadow-lg shadow-indigo-600/20 items-center gap-2">
+                    <Link href="/dashboard/tutor/availability" className="hidden md:flex px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl text-white font-bold transition-all text-sm shadow-lg shadow-blue-600/20 items-center gap-2">
                         <Calendar className="w-4 h-4" /> Set Availability
                     </Link>
                     <div className={cn("border rounded-xl px-4 py-2 flex items-center space-x-2", isVerified ? "bg-emerald-500/10 border-emerald-500/20" : "bg-amber-500/10 border-amber-500/20")}>
                         <div className={cn("w-2 h-2 rounded-full animate-pulse", isVerified ? "bg-emerald-500" : "bg-amber-500")} />
-                        <span className={cn("text-xs font-bold uppercase tracking-widest", isVerified ? "text-emerald-400" : "text-amber-400")}>
+                        <span className={cn("text-xs font-bold uppercase tracking-widest", isVerified ? "text-emerald-700 dark:text-emerald-400" : "text-amber-700 dark:text-amber-400")}>
                             {isVerified ? 'Verified' : isPending ? 'Pending' : 'Unverified'}
                         </span>
                     </div>
@@ -186,7 +189,7 @@ export default function TutorDashboard() {
             {/* Verification Banner */}
             {!isVerified && (
                 <div className={cn("border rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4",
-                    isPending ? "bg-blue-500/10 border-blue-500/20 text-blue-200" : "bg-amber-500/10 border-amber-500/20 text-amber-200"
+                    isPending ? "bg-blue-500/10 border-blue-500/20 text-blue-800 dark:text-blue-200" : "bg-amber-500/10 border-amber-500/20 text-amber-800 dark:text-amber-200"
                 )}>
                     <div className="flex items-center space-x-4">
                         <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center text-xl", isPending ? "bg-blue-500/20" : "bg-amber-500/20")}>
@@ -207,15 +210,15 @@ export default function TutorDashboard() {
 
             {/* Profile Warning */}
             {isProfileIncomplete && (
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div className="flex items-center space-x-4">
-                        <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-xl">📝</div>
+                        <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xl">📝</div>
                         <div>
-                            <p className="font-bold text-white">Complete Your Tutor Profile</p>
-                            <p className="text-sm text-slate-400">Students are 5x more likely to book tutors with complete profiles.</p>
+                            <p className="font-bold text-slate-900 dark:text-white">Complete Your Tutor Profile</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Students are 5x more likely to book tutors with complete profiles.</p>
                         </div>
                     </div>
-                    <Link href="/dashboard/profile" className="shrink-0 px-6 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-500 transition-all">
+                    <Link href="/dashboard/profile" className="shrink-0 px-6 py-2.5 bg-blue-600 text-white font-bold rounded-xl text-sm hover:bg-blue-500 transition-all">
                         Complete Now
                     </Link>
                 </div>
@@ -224,15 +227,15 @@ export default function TutorDashboard() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {statCards.map((stat, i) => (
-                    <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-6 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 hover:border-white/20">
+                    <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-600">
                         <div className={cn("absolute top-0 right-0 w-32 h-32 bg-gradient-to-br opacity-10 blur-2xl -mr-10 -mt-10 group-hover:opacity-20 transition-opacity", stat.color)} />
                         <div className="relative z-10">
                             <div className={cn("w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center mb-3 shadow-lg", stat.color)}>
                                 <stat.icon className="w-4 h-4 text-white" />
                             </div>
-                            <p className="text-2xl font-black text-white mb-0.5">{loading ? '...' : stat.value}</p>
-                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">{stat.label}</p>
-                            <p className="text-xs text-slate-600 mt-1">{stat.change}</p>
+                            <p className="text-2xl font-bold text-slate-900 dark:text-white mb-0.5">{loading ? '...' : stat.value}</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest">{stat.label}</p>
+                            <p className="text-xs text-slate-600 dark:text-slate-500 mt-1">{stat.change}</p>
                         </div>
                     </div>
                 ))}
@@ -241,20 +244,20 @@ export default function TutorDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Pending Requests */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6">
                         <div className="flex items-center justify-between mb-5">
                             <div>
-                                <h2 className="text-xl font-bold text-white">Incoming Requests</h2>
-                                <p className="text-xs text-slate-500 mt-0.5">Students waiting for your response</p>
+                                <h2 className="text-xl font-bold text-slate-900 dark:text-white">Incoming Requests</h2>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Students waiting for your response</p>
                             </div>
-                            <Link href="/dashboard/bookings?status=PENDING" className="text-sm font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                            <Link href="/dashboard/bookings?status=PENDING" className="text-sm font-bold text-amber-600 dark:text-amber-400 hover:text-amber-500 dark:hover:text-amber-300 flex items-center gap-1">
                                 View All <ChevronRight className="w-4 h-4" />
                             </Link>
                         </div>
                         {loading ? (
-                            <div className="space-y-3">{[1, 2].map(i => <div key={i} className="h-16 bg-white/5 rounded-xl animate-pulse" />)}</div>
+                            <div className="space-y-3">{[1, 2].map(i => <div key={i} className="h-16 bg-slate-100 dark:bg-slate-700 rounded-xl animate-pulse" />)}</div>
                         ) : pendingBookings.length === 0 ? (
-                            <div className="text-center py-8 text-slate-500">
+                            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                                 <CheckCircle2 className="w-8 h-8 mx-auto mb-2 opacity-40" />
                                 <p className="text-sm">No pending requests</p>
                             </div>
@@ -264,12 +267,12 @@ export default function TutorDashboard() {
                                     const studentName = (booking.student as any)?.fullName || (booking.student as any)?.name || 'Student';
                                     return (
                                         <div key={booking._id} className="flex items-center gap-4 p-4 bg-amber-500/5 border border-amber-500/10 rounded-xl">
-                                            <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-400 font-bold shrink-0">
+                                            <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center text-amber-700 dark:text-amber-400 font-bold shrink-0">
                                                 {studentName[0]}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="font-bold text-white text-sm truncate">{studentName}</p>
-                                                <p className="text-xs text-slate-400">{formatDate(booking.startTime)} · {formatTime(booking.startTime)}</p>
+                                                <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{studentName}</p>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(booking.startTime)} · {formatTime(booking.startTime)}</p>
                                             </div>
                                             <div className="flex gap-2 shrink-0">
                                                 <button
@@ -280,7 +283,7 @@ export default function TutorDashboard() {
                                                 </button>
                                                 <button
                                                     onClick={() => handleUpdateBooking(booking._id, 'REJECTED')}
-                                                    className="px-3 py-1.5 bg-red-500/10 text-red-400 border border-red-500/20 rounded-lg text-xs font-bold hover:bg-red-500/20 transition-all"
+                                                    className="px-3 py-1.5 bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20 rounded-lg text-xs font-bold hover:bg-red-500/20 transition-all"
                                                 >
                                                     Decline
                                                 </button>
@@ -293,17 +296,17 @@ export default function TutorDashboard() {
                     </div>
 
                     {/* Confirmed Sessions */}
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6">
                         <div className="flex items-center justify-between mb-5">
-                            <h2 className="text-xl font-bold text-white">Upcoming Sessions</h2>
-                            <Link href="/dashboard/bookings?status=CONFIRMED" className="text-sm font-bold text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Upcoming Sessions</h2>
+                            <Link href="/dashboard/bookings?status=CONFIRMED" className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 flex items-center gap-1">
                                 View All <ChevronRight className="w-4 h-4" />
                             </Link>
                         </div>
                         {loading ? (
-                            <div className="space-y-3">{[1, 2].map(i => <div key={i} className="h-16 bg-white/5 rounded-xl animate-pulse" />)}</div>
+                            <div className="space-y-3">{[1, 2].map(i => <div key={i} className="h-16 bg-slate-100 dark:bg-slate-700 rounded-xl animate-pulse" />)}</div>
                         ) : confirmedBookings.length === 0 ? (
-                            <div className="text-center py-8 text-slate-500">
+                            <div className="text-center py-8 text-slate-500 dark:text-slate-400">
                                 <Calendar className="w-8 h-8 mx-auto mb-2 opacity-40" />
                                 <p className="text-sm">No confirmed sessions yet</p>
                             </div>
@@ -312,24 +315,24 @@ export default function TutorDashboard() {
                                 {confirmedBookings.map((booking) => {
                                     const studentName = (booking.student as any)?.fullName || (booking.student as any)?.name || 'Student';
                                     return (
-                                        <div key={booking._id} className="flex items-center gap-4 p-4 bg-white/5 border border-white/5 rounded-xl">
-                                            <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold shrink-0">
+                                        <div key={booking._id} className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-xl">
+                                            <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold shrink-0">
                                                 {studentName[0]}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="font-bold text-white text-sm truncate">{studentName}</p>
-                                                <p className="text-xs text-slate-400">{formatDate(booking.startTime)} · {formatTime(booking.startTime)} – {formatTime(booking.endTime)}</p>
+                                                <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{studentName}</p>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(booking.startTime)} · {formatTime(booking.startTime)} – {formatTime(booking.endTime)}</p>
                                             </div>
                                             <div className="flex flex-col items-end gap-2 shrink-0">
                                                 <div className="text-right">
-                                                    <p className="text-sm font-bold text-emerald-400">Rs. {booking.price}</p>
-                                                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full border text-emerald-400 bg-emerald-400/10 border-emerald-400/20 uppercase">
+                                                    <p className="text-sm font-bold text-emerald-700 dark:text-emerald-400">Rs. {booking.price}</p>
+                                                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border-emerald-500/20 uppercase">
                                                         {booking.status === 'PAID' ? 'Paid' : 'Confirmed'}
                                                     </span>
                                                 </div>
                                                 <button
                                                     onClick={() => handleCompleteBooking(booking._id)}
-                                                    className="px-3 py-1 bg-indigo-600 text-white rounded-lg text-xs font-bold hover:bg-indigo-500 transition-all flex items-center gap-1"
+                                                    className="px-3 py-1 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-500 transition-all flex items-center gap-1"
                                                 >
                                                     <CheckCircle2 className="w-3 h-3" /> Complete
                                                 </button>
@@ -345,20 +348,20 @@ export default function TutorDashboard() {
                 {/* Right Column */}
                 <div className="space-y-6">
                     {/* Earnings Card */}
-                    <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-6 relative overflow-hidden shadow-2xl shadow-indigo-600/20">
+                    <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-2xl p-6 relative overflow-hidden shadow-lg shadow-blue-600/20">
                         <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-4">
-                                <p className="text-indigo-200 text-sm font-bold uppercase tracking-widest">Total Earnings</p>
-                                <TrendingUp className="w-5 h-5 text-indigo-300" />
+                                <p className="text-blue-200 text-sm font-bold uppercase tracking-widest">Total Earnings</p>
+                                <TrendingUp className="w-5 h-5 text-blue-300" />
                             </div>
-                            <p className="text-3xl font-black text-white mb-1">
+                            <p className="text-3xl font-bold text-white mb-1">
                                 Rs. {stats?.totalEarnings?.toLocaleString() || '0'}
                             </p>
-                            <p className="text-indigo-200 text-xs mb-5">All time earnings</p>
+                            <p className="text-blue-200 text-xs mb-5">All time earnings</p>
                             <BarChart data={weeklyData} />
-                            <div className="mt-4 pt-4 border-t border-white/10">
-                                <Link href="/dashboard/tutor/earnings" className="w-full py-2.5 bg-white text-indigo-600 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-indigo-50 transition-all flex items-center justify-center gap-2">
+                            <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                                <Link href="/dashboard/tutor/earnings" className="w-full py-2.5 bg-white text-blue-600 rounded-xl font-bold text-sm uppercase tracking-widest hover:bg-blue-50 transition-all flex items-center justify-center gap-2">
                                     <BarChart2 className="w-4 h-4" /> Full Analytics
                                 </Link>
                             </div>
@@ -366,22 +369,22 @@ export default function TutorDashboard() {
                     </div>
 
                     {/* Quick Links */}
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-4">Quick Actions</p>
+                    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest mb-4">Quick Actions</p>
                         <div className="space-y-2">
                             {[
-                                { href: '/dashboard/tutor/availability', icon: Calendar, label: 'Manage Availability', color: 'text-indigo-400' },
-                                { href: '/dashboard/study', icon: BookOpen, label: 'Study Materials', color: 'text-purple-400' },
-                                { href: '/dashboard/tutor/students', icon: Users, label: 'My Students', color: 'text-blue-400' },
-                                { href: '/dashboard/tutor/earnings', icon: DollarSign, label: 'Earnings & Payouts', color: 'text-emerald-400' },
-                                { href: '/dashboard/tutor/reviews', icon: Star, label: 'Reviews & Ratings', color: 'text-amber-400' },
-                                { href: '/dashboard/tutor/verification', icon: FileCheck, label: 'Verification Panel', color: 'text-purple-400' },
+                                { href: '/dashboard/tutor/availability', icon: Calendar, label: 'Manage Availability', color: 'text-blue-600 dark:text-blue-400' },
+                                { href: '/dashboard/study', icon: BookOpen, label: 'Study Materials', color: 'text-blue-600 dark:text-blue-400' },
+                                { href: '/dashboard/tutor/students', icon: Users, label: 'My Students', color: 'text-blue-600 dark:text-blue-400' },
+                                { href: '/dashboard/tutor/earnings', icon: DollarSign, label: 'Earnings & Payouts', color: 'text-emerald-700 dark:text-emerald-400' },
+                                { href: '/dashboard/tutor/reviews', icon: Star, label: 'Reviews & Ratings', color: 'text-amber-600 dark:text-amber-400' },
+                                { href: '/dashboard/tutor/verification', icon: FileCheck, label: 'Verification Panel', color: 'text-blue-600 dark:text-blue-400' },
                             ].map((item) => (
-                                <Link key={item.href} href={item.href} className="flex items-center justify-between p-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-all group">
+                                <Link key={item.href} href={item.href} className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-100 dark:border-slate-700 rounded-xl transition-all group">
                                     <div className={cn("flex items-center gap-2 font-bold text-sm", item.color)}>
                                         <item.icon className="w-4 h-4" /> {item.label}
                                     </div>
-                                    <ChevronRight className="w-4 h-4 text-slate-500 group-hover:translate-x-1 transition-transform" />
+                                    <ChevronRight className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:translate-x-1 transition-transform" />
                                 </Link>
                             ))}
                         </div>
