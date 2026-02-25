@@ -105,7 +105,15 @@ export default function StudentDashboard() {
             <div className="flex h-[60vh] flex-col items-center justify-center text-center">
                 <Shield className="w-16 h-16 text-red-500 mb-4 opacity-50" />
                 <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Access Denied</h1>
-                <p className="text-slate-500 dark:text-slate-400 max-w-md mt-2">This area is restricted to Students only.</p>
+                <p className="text-slate-500 dark:text-slate-400 max-w-md mt-2">
+                    This area is restricted to Students only. Your account role is <strong>{user?.role}</strong>.
+                </p>
+                <button
+                    onClick={() => router.replace(user?.role === 'TUTOR' ? '/dashboard/tutor' : '/login')}
+                    className="mt-6 px-6 py-2.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+                >
+                    {user?.role === 'TUTOR' ? 'Go to Tutor Dashboard' : 'Back to Login'}
+                </button>
             </div>
         );
     }

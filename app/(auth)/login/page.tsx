@@ -60,6 +60,9 @@ function LoginContent() {
       // Update auth store with user data
       setAuth(normalizedUser, response.accessToken, response.refreshToken);
       
+      // Set role cookie for middleware-based route protection
+      document.cookie = `user-role=${normalizedRole}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
+      
       // Role-based redirect
       if (normalizedRole === 'STUDENT') {
         router.push('/dashboard/student');

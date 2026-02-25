@@ -58,6 +58,8 @@ export const useAuthStore = create<AuthState>()(
                 });
                 if (typeof window !== 'undefined') {
                     localStorage.removeItem('auth-storage');
+                    // Clear the role cookie used by middleware
+                    document.cookie = 'user-role=; path=/; max-age=0; SameSite=Lax';
                 }
             },
             clearAuth: () => set({ 

@@ -73,6 +73,23 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         }
     }, [user, router, mounted]);
 
+    // Role-based route protection: redirect to the correct dashboard
+    useEffect(() => {
+        if (!mounted || !user) return;
+
+        const role = user.role;
+        // Student accessing tutor-only routes
+        if (pathname?.startsWith('/dashboard/tutor') && role === 'STUDENT') {
+            router.replace('/dashboard/student');
+            return;
+        }
+        // Tutor accessing student-only routes
+        if (pathname?.startsWith('/dashboard/student') && role === 'TUTOR') {
+            router.replace('/dashboard/tutor');
+            return;
+        }
+    }, [mounted, user, pathname, router]);
+
     if (!mounted || !user) return null;
 
     const handleLogout = async () => {
