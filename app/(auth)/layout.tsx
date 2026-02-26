@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { BookOpen } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import Logo from '@/components/Logo';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,11 +14,11 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-400/10 rounded-full blur-[120px]" />
 
         <div className="relative z-10 max-w-lg">
-          <div className="flex items-center space-x-3 mb-8">
-            <div className="bg-white/20 backdrop-blur-sm p-3 rounded-2xl shadow-lg">
-              <img src="/learnmentor.png" alt="LearnMentor" className="w-8 h-8 object-contain" />
-            </div>
-            <span className="text-3xl font-bold tracking-tight">LearnMentor</span>
+          <div className="flex items-center space-x-3 mb-10">
+            <Logo 
+              containerClassName="w-16 h-16 md:w-20 md:h-20" 
+              textClassName="text-white text-3xl md:text-5xl" 
+            />
           </div>
 
           <h2 className="text-5xl font-extrabold mb-6 leading-tight text-white">

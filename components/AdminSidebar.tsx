@@ -9,6 +9,8 @@ import {
     Shield, BarChart2, Users, Megaphone, LogOut, ChevronRight
 } from 'lucide-react';
 
+import Logo from '@/components/Logo';
+
 export default function AdminSidebar({ userName }: { userName: string }) {
     const pathname = usePathname();
     const router = useRouter();
@@ -28,9 +30,12 @@ export default function AdminSidebar({ userName }: { userName: string }) {
     return (
         <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-700 to-blue-800 dark:bg-slate-800 dark:from-slate-800 dark:to-slate-800 border-r border-blue-600 dark:border-slate-700 flex flex-col shadow-lg">
             <div className="flex items-center gap-3 px-6 py-6 border-b border-blue-500/40 dark:border-slate-700">
-                <div className="w-9 h-9 rounded-xl bg-white/20 dark:bg-blue-600 flex items-center justify-center shadow-md">
-                    <img src="/learnmentor.png" alt="LearnMentor" className="w-5 h-5 object-contain" />
-                </div>
+                <Link href="/" className="mb-2">
+                    <Logo 
+                        showText={false} 
+                        containerClassName="w-14 h-14" 
+                    />
+                </Link>
                 <div>
                     <p className="font-bold text-white text-sm">LearnMentor</p>
                     <p className="text-[10px] font-semibold text-blue-200 dark:text-blue-400 uppercase tracking-widest">Admin Panel</p>

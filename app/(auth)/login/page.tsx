@@ -5,11 +5,12 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { Mail, Lock, Eye, EyeOff, BookOpen, ArrowRight, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { useAuthStore, type User } from '@/store/auth-store';
 import { LoginSchema, type LoginFormData } from '../schema';
 import { cn } from '@/lib/utils';
+import Logo from '@/components/Logo';
 
 export default function LoginPage() {
   return (
@@ -84,9 +85,12 @@ function LoginContent() {
     <div className="flex items-center justify-center p-4 relative">
       <div className="w-full max-w-md relative z-10 animate-fade-in-up">
         {/* Brand Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-600/20">
-            <BookOpen className="w-7 h-7 text-white" />
+        <div className="text-center mb-10">
+          <div className="flex justify-center mb-8">
+            <Logo 
+              showText={false} 
+              containerClassName="w-20 h-20 shadow-2xl" 
+            />
           </div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Welcome Back</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2">Sign in to continue your learning journey</p>

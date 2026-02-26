@@ -6,12 +6,13 @@ import { cn } from '@/lib/utils';
 import {
     BookOpen, Award, Clock, Search, MessageCircle, CheckCircle,
     ArrowRight, Shield, TrendingUp, Star, Calendar, Zap,
-    Users, DollarSign, ChevronRight, Play, BarChart2, Target,
+    Users, Banknote, ChevronRight, Play, BarChart2, Target,
     CalendarCheck2,
     CheckCircle2
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Logo from '@/components/Logo';
 import { dashboardService, StudentStats } from '@/services/dashboard.service';
 import { bookingService, Booking } from '@/services/booking.service';
 import { tutorService, Tutor } from '@/services/tutor.service';
@@ -152,7 +153,7 @@ export default function StudentDashboard() {
             label: 'Total Spent',
             value: stats?.totalSpent ? `Rs. ${stats.totalSpent.toLocaleString()}` : '—',
             sub: 'Payments made',
-            icon: DollarSign,
+            icon: Banknote,
             color: 'from-amber-500 to-orange-500',
             glow: 'shadow-amber-500/20',
             spark: [100, 200, 150, 400, 300, 500, 450, stats?.totalSpent || 600]
@@ -177,9 +178,12 @@ export default function StudentDashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <img src="/learnmentor.png" alt="LearnMentor" className="w-5 h-5 object-contain" />
-                        <p className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-widest">Student Dashboard</p>
+                    <div className="flex items-center gap-4 mb-4">
+                        <Logo 
+                            showText={false} 
+                            containerClassName="w-12 h-12 shadow-sm" 
+                        />
+                        <p className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-[0.2em]">Student Dashboard</p>
                     </div>
                     <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">
                         Welcome Back, {user?.name?.split(' ')[0] || 'Student'}! <span className="animate-bounce inline-block">🎓</span>
@@ -191,7 +195,7 @@ export default function StudentDashboard() {
                         <Search className="w-4 h-4" /> Find Tutors
                     </Link>
                     <Link href="/dashboard/wallet" className="hidden md:flex px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-300 font-bold transition-all text-sm items-center gap-2">
-                        <DollarSign className="w-4 h-4" /> Wallet
+                        <Banknote className="w-4 h-4" /> Wallet
                     </Link>
                     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2 flex items-center space-x-2">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -335,7 +339,7 @@ export default function StudentDashboard() {
                             </Link>
                             <Link href="/dashboard/wallet" className="flex items-center justify-between p-3 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl transition-all group">
                                 <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300 font-bold text-sm">
-                                    <DollarSign className="w-4 h-4" /> Wallet
+                                    <Banknote className="w-4 h-4" /> Wallet
                                 </div>
                                 <ChevronRight className="w-4 h-4 text-slate-500 dark:text-slate-400 group-hover:translate-x-1 transition-transform" />
                             </Link>

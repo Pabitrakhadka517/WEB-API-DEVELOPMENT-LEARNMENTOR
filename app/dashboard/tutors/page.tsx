@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { tutorService, chatService, bookingService, Tutor, TutorFilter } from '@/services';
 import {
-    Loader2, Search, MapPin, Star, MessageCircle, DollarSign,
+    Loader2, Search, MapPin, Star, MessageCircle, Banknote,
     BookOpen, CheckCircle2, Filter, X, ChevronDown, SlidersHorizontal,
     Globe, Monitor, Users, CalendarCheck2
 } from 'lucide-react';

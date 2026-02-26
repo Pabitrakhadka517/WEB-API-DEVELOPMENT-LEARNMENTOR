@@ -7,19 +7,28 @@ console.log('🔧 API Service Configuration:', { API_URL });
 
 // Test backend connectivity on service initialization
 const testBackendConnection = async () => {
+    // Basic URL parsing to get root for health check
+    const BASE_URL = API_URL.replace(/\/api\/?$/, '');
+
     try {
-        const response = await axios.get('http://localhost:4000/health', { timeout: 5000 });
+        const response = await axios.get(`${BASE_URL}/health`, { 
+            timeout: 5000,
+            headers: { 'Accept': 'application/json' }
+        });
         console.log('✅ Backend connectivity test passed:', response.data);
     } catch (error: any) {
-        console.error('❌ Backend connectivity test failed:', {
-            message: error?.message,
-            code: error?.code,
-            status: error?.response?.status
-        });
-        console.error('🚨 Frontend cannot reach backend. Please ensure:');
-        console.error('   1. Backend server is running on port 4000');
-        console.error('   2. No firewall is blocking the connection');
-        console.error('   3. Check CORS configuration');
+        const errorDetail = {
+            url: `${BASE_URL}/health`,
+            message: error?.message || 'Network Error',
+            code: error?.code || 'NO_CODE',
+            status: error?.response?.status || 'NO_STATUS'
+        };
+        
+        console.error(`❌ Backend connectivity test failed [${errorDetail.code}]:`, errorDetail);
+        
+        if (errorDetail.code === 'ERR_NETWORK') {
+            console.error(`🚨 Backend is unreachable at ${BASE_URL}. Ensure the server is running on port 4000.`);
+        }
     }
 };
 

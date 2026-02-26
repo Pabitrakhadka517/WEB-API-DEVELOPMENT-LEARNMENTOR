@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/auth-store';
 import { transactionService, Transaction } from '@/services/transaction.service';
 import { cn } from '@/lib/utils';
 import {
-    DollarSign, TrendingUp, ArrowDownLeft, ArrowUpRight,
+    Banknote, TrendingUp, ArrowDownLeft, ArrowUpRight,
     Loader2, RefreshCw, CreditCard, Wallet, ChevronRight,
     CheckCircle, XCircle, Clock, Shield
 } from 'lucide-react';
@@ -78,7 +78,7 @@ export default function WalletPage() {
                     <div className="relative z-10">
                         <div className="flex items-center justify-between mb-3">
                             <p className="text-blue-200 text-sm font-bold uppercase tracking-widest">Total Spent</p>
-                            <DollarSign className="w-5 h-5 text-blue-300" />
+                            <Banknote className="w-5 h-5 text-blue-300" />
                         </div>
                         <p className="text-3xl font-bold text-white">Rs. {totalSpent.toLocaleString()}</p>
                         <p className="text-blue-200 text-xs mt-1">{transactions.filter(t => t.status === 'completed').length} completed payments</p>

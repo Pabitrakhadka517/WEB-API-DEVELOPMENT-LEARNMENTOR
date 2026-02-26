@@ -35,8 +35,8 @@ export function formatDateTime(date: string | Date): string {
 /**
  * Format currency
  */
-export function formatCurrency(amount: number, currency: string = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
+export function formatCurrency(amount: number, currency: string = 'NPR'): string {
+  return new Intl.NumberFormat('en-NP', {
     style: 'currency',
     currency,
   }).format(amount);

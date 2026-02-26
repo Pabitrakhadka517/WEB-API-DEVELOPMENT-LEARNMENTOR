@@ -8,10 +8,11 @@ import {
     Users, GraduationCap, Activity, UserCog,
     TrendingUp, Loader2, AlertCircle, RefreshCw,
     TrendingDown, ArrowUpRight, ArrowDownRight,
-    Zap, Megaphone, ShieldCheck, DollarSign,
+    Zap, Megaphone, ShieldCheck, Banknote,
     CreditCard, TrendingUpDown, PiggyBank
 } from 'lucide-react';
 import Link from 'next/link';
+import Logo from '@/components/Logo';
 
 function StatCard({ label, value, icon: Icon, color, sub, trend, prefix = '' }: {
     label: string; value: number; icon: React.ElementType; color: string; sub: string; trend?: number; prefix?: string;
@@ -89,38 +90,38 @@ export default function AdminOverviewPage() {
     ];
 
     const earningsCards = [
-        { 
-            label: 'Platform Revenue', 
-            value: stats?.earnings?.totalRevenue ?? 0, 
-            icon: DollarSign, 
-            color: 'bg-gradient-to-br from-green-500 to-emerald-600', 
-            sub: 'Total Transaction Volume', 
+        {
+            label: 'Platform Revenue',
+            value: stats?.earnings?.totalRevenue ?? 0,
+            icon: Banknote,
+            color: 'bg-gradient-to-br from-green-500 to-emerald-600',
+            sub: 'Total Transaction Volume',
             trend: 15,
             prefix: 'Rs. '
         },
-        { 
-            label: 'Admin Earnings', 
-            value: stats?.earnings?.adminEarnings ?? 0, 
-            icon: PiggyBank, 
-            color: 'bg-gradient-to-br from-blue-500 to-blue-600', 
-            sub: 'Commission from Bookings', 
+        {
+            label: 'Admin Earnings',
+            value: stats?.earnings?.adminEarnings ?? 0,
+            icon: PiggyBank,
+            color: 'bg-gradient-to-br from-blue-500 to-blue-600',
+            sub: 'Commission from Bookings',
             trend: 12,
             prefix: 'Rs. '
         },
-        { 
-            label: 'Total Transactions', 
-            value: stats?.earnings?.totalTransactions ?? 0, 
-            icon: CreditCard, 
-            color: 'bg-gradient-to-br from-rose-500 to-pink-600', 
-            sub: 'Completed Payments', 
+        {
+            label: 'Total Transactions',
+            value: stats?.earnings?.totalTransactions ?? 0,
+            icon: CreditCard,
+            color: 'bg-gradient-to-br from-rose-500 to-pink-600',
+            sub: 'Completed Payments',
             trend: 8
         },
-        { 
-            label: 'Avg Commission', 
-            value: parseFloat(stats?.earnings?.averageCommission?.toString() ?? '0'), 
-            icon: TrendingUpDown, 
-            color: 'bg-gradient-to-br from-cyan-500 to-blue-600', 
-            sub: 'Per Transaction', 
+        {
+            label: 'Avg Commission',
+            value: parseFloat(stats?.earnings?.averageCommission?.toString() ?? '0'),
+            icon: TrendingUpDown,
+            color: 'bg-gradient-to-br from-cyan-500 to-blue-600',
+            sub: 'Per Transaction',
             trend: 5,
             prefix: 'Rs. '
         },
@@ -130,8 +131,11 @@ export default function AdminOverviewPage() {
         <div className="p-10 space-y-10 animate-fade-in-up">
             <div className="flex items-center justify-between">
                 <div>
-                    <div className="flex items-center gap-3 mb-1">
-                        <img src="/learnmentor.png" alt="LearnMentor" className="w-7 h-7 object-contain" />
+                    <div className="flex items-center gap-4 mb-3">
+                        <Logo 
+                            showText={false} 
+                            containerClassName="w-14 h-14" 
+                        />
                         <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                             Platform <span className="text-blue-600">Overview</span>
                         </h1>
@@ -155,7 +159,7 @@ export default function AdminOverviewPage() {
             <div className="space-y-6">
                 <div className="flex items-center gap-4">
                     <div className="bg-gradient-to-br from-green-500 to-emerald-600 w-10 h-10 rounded-xl flex items-center justify-center shadow-sm">
-                        <DollarSign className="w-5 h-5 text-white" />
+                        <Banknote className="w-5 h-5 text-white" />
                     </div>
                     <div>
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">

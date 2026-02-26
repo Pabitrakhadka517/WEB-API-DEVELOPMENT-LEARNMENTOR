@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { tutorService, bookingService, Tutor } from '@/services';
-import { Loader2, Calendar, Clock, ArrowLeft, DollarSign, Info, AlertCircle, Shield, CheckCircle2 } from 'lucide-react';
+import { Loader2, Calendar, Clock, ArrowLeft, Banknote, Info, AlertCircle, Shield, CheckCircle2 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { cn } from '@/lib/utils';
 

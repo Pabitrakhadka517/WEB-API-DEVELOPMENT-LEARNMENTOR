@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { tutorService, bookingService, reviewService, chatService, Tutor, Review } from '@/services';
 import {
-    Loader2, Star, MessageCircle, DollarSign, BookOpen,
+    Loader2, Star, MessageCircle, Banknote, BookOpen,
     CheckCircle2, Globe, Shield, Calendar, ArrowLeft,
     Clock, Award, Book, Heart, Share2, MapPin, Zap, Users,
     ChevronRight, Monitor, Quote

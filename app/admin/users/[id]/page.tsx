@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
     ArrowLeft, Mail, Phone, MapPin, Calendar,
-    Shield, Briefcase, DollarSign, CheckCircle2,
+    Shield, Briefcase, Banknote, CheckCircle2,
     XCircle, Clock, Loader2, UserCog, Trash2
 } from 'lucide-react';
 import { adminService } from '@/services/admin.service';
@@ -180,8 +180,7 @@ export default function UserDetailPage() {
                                         <p className="text-lg font-bold text-slate-900 dark:text-white">{user.speciality}</p>
                                     </div>
                                     <div className="space-y-2">
-                                        <div className="flex items-center gap-2 text-slate-500 mb-2">
-                                            <DollarSign className="w-4 h-4" />
+                                            <Banknote className="w-4 h-4" />
                                             <span className="text-[10px] font-bold uppercase tracking-widest">Hourly Rate</span>
                                         </div>
                                         <p className="text-lg font-bold text-emerald-400">Rs. {user.tutorProfile?.hourlyRate || 0}/hr</p>

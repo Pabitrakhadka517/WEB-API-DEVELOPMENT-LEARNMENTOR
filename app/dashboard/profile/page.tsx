@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import {
-    Camera, User, Phone, MapPin, Briefcase, DollarSign, Award,
+    Camera, User, Phone, MapPin, Briefcase, Banknote, Award,
     CheckCircle2, AlertCircle, Clock, Loader2, Save, X
 } from 'lucide-react';
 import { useProfile } from '@/hooks';
@@ -383,7 +383,7 @@ export default function ProfilePage() {
                                         Hourly Rate (Rs.)
                                     </label>
                                     <div className="relative group">
-                                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 dark:text-slate-400 group-focus-within:text-emerald-400 transition-colors" />
+                                        <Banknote className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 dark:text-slate-400 group-focus-within:text-emerald-400 transition-colors" />
                                         <input
                                             type="number"
                                             {...register('hourlyRate')}

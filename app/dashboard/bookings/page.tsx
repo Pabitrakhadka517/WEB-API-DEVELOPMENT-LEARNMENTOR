@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { bookingService, Booking, chatService, paymentService } from '@/services';
-import { Loader2, Calendar, Clock, MapPin, User, CheckCircle, XCircle, AlertCircle, DollarSign, MessageCircle, Star, CreditCard, Info, BookOpen } from 'lucide-react';
+import { Loader2, Calendar, Clock, MapPin, User, CheckCircle, XCircle, AlertCircle, Banknote, MessageCircle, Star, CreditCard, Info, BookOpen } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
@@ -294,7 +294,7 @@ export default function BookingsPage() {
                                     <div className="flex flex-wrap gap-4 text-sm text-slate-500 dark:text-slate-400">
                                         {booking.price && (
                                             <div className="flex items-center text-emerald-700 dark:text-emerald-400 font-bold">
-                                                <DollarSign className="w-4 h-4 mr-1" />
+                                                <Banknote className="w-4 h-4 mr-1" />
                                                 <span>
                                                     {!isStudent ? `Net Earning: Rs. ${Math.round(booking.price * 0.9)}` : `Price: Rs. ${booking.price}`}
                                                 </span>

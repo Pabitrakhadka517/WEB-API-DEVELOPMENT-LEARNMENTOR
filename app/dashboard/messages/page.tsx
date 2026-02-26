@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import io from 'socket.io-client';
 import { useAuthStore } from '@/store/auth-store';
 import { chatService, Chat, Message, authService } from '@/services';
-import { Loader2, Send, Search, ArrowLeft, MoreVertical, Paperclip, CheckCheck, Check, MessageCircle } from 'lucide-react';
+import { Loader2, Send, Search, ArrowLeft, MoreVertical, Paperclip, CheckCheck, Check, MessageCircle, FileIcon, Download, X, ImageIcon, FileText, Trash2, Edit3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 
@@ -30,7 +30,13 @@ export default function MessagesPage() {
     const [loadingMessages, setLoadingMessages] = useState(false);
     const [newMessage, setNewMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
+    const [filePreview, setFilePreview] = useState<string | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const [editingMessage, setEditingMessage] = useState<Message | null>(null);
+    const [editContent, setEditContent] = useState('');
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Initialize Socket with token refresh support
     useEffect(() => {
@@ -85,6 +91,8 @@ export default function MessagesPage() {
                 setMessages((prev) => {
                     // Check if message belongs to current chat
                     if (selectedChat && ((message as any).chatRoom === selectedChat._id)) {
+                        // Avoid duplicates (e.g. sender receiving their own message)
+                        if (prev.some(m => m._id === message._id)) return prev;
                         return [...prev, message];
                     }
                     return prev;
@@ -93,9 +101,13 @@ export default function MessagesPage() {
                 // Update last message in chat list
                 setChats(prev => prev.map(c => {
                     if (c._id === (message as any).chatRoom) {
+                        let displayMsg = message.message;
+                        if (message.messageType === 'image') displayMsg = '📷 Image';
+                        else if (message.messageType === 'file') displayMsg = '📄 Attachment';
+
                         return {
                             ...c,
-                            lastMessage: message.message,
+                            lastMessage: displayMsg,
                             lastMessageAt: message.createdAt,
                             unreadCount: (selectedChat?._id === c._id) ? 0 : (c.unreadCount || 0) + 1,
                             updatedAt: new Date().toISOString()
@@ -103,6 +115,14 @@ export default function MessagesPage() {
                     }
                     return c;
                 }).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()));
+            });
+
+            newSocket.on('message_edited', (data: { messageId: string, newContent: string, updatedAt: string }) => {
+                setMessages(prev => prev.map(m => m._id === data.messageId ? { ...m, message: data.newContent, isEdited: true, updatedAt: data.updatedAt } : m));
+            });
+
+            newSocket.on('message_deleted', (data: { messageId: string }) => {
+                setMessages(prev => prev.map(m => m._id === data.messageId ? { ...m, isDeleted: true, message: 'This message was deleted' } : m));
             });
 
             if (!cancelled) {
@@ -175,26 +195,103 @@ export default function MessagesPage() {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Size limit validation (10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File size exceeds 10MB limit.');
+            return;
+        }
+
+        setSelectedFile(file);
+
+        // Generate preview for images
+        if (file.mimetype?.startsWith('image/') || file.type?.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFilePreview(reader.result as string);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setFilePreview(null);
+        }
+    };
+
+    const removeSelectedFile = () => {
+        setSelectedFile(null);
+        setFilePreview(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim() || !selectedChat) return;
+        if ((!newMessage.trim() && !selectedFile) || !selectedChat) return;
 
         const msgContent = newMessage;
+        const fileToSend = selectedFile;
+        
         setNewMessage(''); // Clear input immediately
+        removeSelectedFile();
+        setUploading(true);
 
         try {
-            const message = await chatService.sendMessage(selectedChat._id, msgContent);
+            const message = await chatService.sendMessage(selectedChat._id, msgContent, fileToSend as File);
             setMessages(prev => [...prev, message]);
 
             // Update chat list snippet
             setChats(prev => prev.map(c => {
                 if (c._id === selectedChat._id) {
-                    return { ...c, lastMessage: msgContent, lastMessageAt: new Date().toISOString() };
+                    const lastSnippet = fileToSend 
+                        ? (fileToSend.type.startsWith('image/') ? '📷 Image' : `📄 ${fileToSend.name}`)
+                        : msgContent;
+                    return { ...c, lastMessage: lastSnippet, lastMessageAt: new Date().toISOString() };
                 }
                 return c;
             }));
         } catch (err) {
             console.warn('⚠️ Failed to send message:', err);
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleEditMessage = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingMessage || !editContent.trim()) return;
+
+        try {
+            const updated = await chatService.editMessage(editingMessage._id, editContent);
+            setMessages(prev => prev.map(m => m._id === updated._id ? { ...m, ...updated } : m));
+            setEditingMessage(null);
+            setEditContent('');
+        } catch (err) {
+            console.warn('⚠️ Failed to edit message:', err);
+        }
+    };
+
+    const handleDeleteMessage = async (messageId: string) => {
+        if (!confirm('Are you sure you want to delete this message?')) return;
+
+        try {
+            await chatService.deleteMessage(messageId);
+            setMessages(prev => prev.map(m => m._id === messageId ? { ...m, isDeleted: true, message: 'This message was deleted' } : m));
+        } catch (err) {
+            console.warn('⚠️ Failed to delete message:', err);
+        }
+    };
+
+    const handleDeleteConversation = async () => {
+        if (!selectedChat) return;
+        if (!confirm('Delete this conversation? It will be hidden from your active list.')) return;
+
+        try {
+            await chatService.deleteConversation(selectedChat._id);
+            setChats(prev => prev.filter(c => c._id !== selectedChat._id));
+            setSelectedChat(null);
+        } catch (err) {
+            console.warn('⚠️ Failed to delete conversation:', err);
         }
     };
 
@@ -352,9 +449,18 @@ export default function MessagesPage() {
                                     );
                                 })()}
                             </div>
-                            <button className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-700">
-                                <MoreVertical className="w-5 h-5" />
-                            </button>
+                            <div className="flex items-center gap-1">
+                                <button 
+                                    onClick={handleDeleteConversation}
+                                    title="Delete Conversation"
+                                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-full transition-colors"
+                                >
+                                    <Trash2 className="w-5 h-5" />
+                                </button>
+                                <button className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-700">
+                                    <MoreVertical className="w-5 h-5" />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Messages List */}
@@ -371,25 +477,85 @@ export default function MessagesPage() {
                             ) : (
                                 messages.map((msg, idx) => {
                                     const currentUserId = user?.id || (user as any)?._id;
-                                    const isMe = msg.sender._id === currentUserId;
+                                    const senderId = typeof msg.sender === 'string' ? msg.sender : msg.sender?._id;
+                                    const isMe = senderId === currentUserId;
 
                                     return (
                                         <div key={msg._id || idx} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
                                             <div className={cn(
-                                                "max-w-[75%] rounded-2xl px-4 py-3 text-sm",
-                                                isMe
-                                                    ? "bg-blue-600 text-white rounded-tr-none"
-                                                    : "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white rounded-tl-none"
+                                                "max-w-[75%] rounded-2xl overflow-hidden",
+                                                isMe ? "rounded-tr-none" : "rounded-tl-none"
                                             )}>
-                                                <p>{msg.message}</p>
                                                 <div className={cn(
-                                                    "text-[10px] mt-1 flex items-center justify-end opacity-70",
-                                                    isMe ? "text-blue-200" : "text-slate-500 dark:text-slate-400"
+                                                    "px-4 py-3 text-sm relative group/msg",
+                                                    isMe
+                                                        ? "bg-blue-600 text-white"
+                                                        : "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white"
                                                 )}>
-                                                    {formatTime(msg.createdAt)}
-                                                    {isMe && (
-                                                        msg.isRead ? <CheckCheck className="w-3 h-3 ml-1" /> : <Check className="w-3 h-3 ml-1" />
+                                                    {isMe && !msg.isDeleted && (
+                                                        <div className="absolute top-1 right-1 flex items-center gap-1 opacity-0 group-hover/msg:opacity-100 transition-opacity bg-black/20 rounded-lg p-1">
+                                                            {msg.messageType === 'text' && (
+                                                                <button onClick={() => { setEditingMessage(msg); setEditContent(msg.message); }} className="p-1 hover:text-blue-300">
+                                                                    <Edit3 className="w-3 h-3" />
+                                                                </button>
+                                                            )}
+                                                            <button onClick={() => handleDeleteMessage(msg._id)} className="p-1 hover:text-red-400">
+                                                                <Trash2 className="w-3 h-3" />
+                                                            </button>
+                                                        </div>
                                                     )}
+
+                                                    {msg.messageType === 'image' && msg.fileUrl && !msg.isDeleted && (
+                                                        <div className="mb-2 -mx-1 -mt-1 rounded-lg overflow-hidden border border-black/5 dark:border-white/5">
+                                                            <img 
+                                                                src={msg.fileUrl} 
+                                                                alt="Attachment" 
+                                                                className="max-w-full h-auto object-cover hover:scale-[1.02] transition-transform cursor-pointer" 
+                                                                onClick={() => window.open(msg.fileUrl, '_blank')}
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {msg.messageType === 'file' && msg.fileUrl && !msg.isDeleted && (
+                                                        <div className={cn(
+                                                            "mb-2 p-3 rounded-xl flex items-center justify-between gap-4 border",
+                                                            isMe ? "bg-blue-700/50 border-blue-400/30" : "bg-white/10 border-slate-300 dark:border-slate-600"
+                                                        )}>
+                                                            <div className="flex items-center gap-3 overflow-hidden">
+                                                                <div className="p-2 rounded-lg bg-white/20">
+                                                                    <FileText className="w-5 h-5" />
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className="font-bold text-xs truncate max-w-[150px]">{msg.fileName || 'Document'}</p>
+                                                                    <p className="text-[10px] opacity-60 uppercase">Attachment</p>
+                                                                </div>
+                                                            </div>
+                                                            <a 
+                                                                href={msg.fileUrl} 
+                                                                target="_blank" 
+                                                                rel="noopener noreferrer"
+                                                                className="p-2 rounded-full hover:bg-white/20 transition-colors"
+                                                                title="Download"
+                                                            >
+                                                                <Download className="w-4 h-4" />
+                                                            </a>
+                                                        </div>
+                                                    )}
+
+                                                    <p className={cn(msg.isDeleted && "italic opacity-60")}>
+                                                        {msg.message}
+                                                    </p>
+
+                                                    <div className={cn(
+                                                        "text-[10px] mt-1 flex items-center justify-end opacity-70",
+                                                        isMe ? "text-blue-200" : "text-slate-500 dark:text-slate-400"
+                                                    )}>
+                                                        {msg.isEdited && <span className="mr-1 italic">(edited)</span>}
+                                                        {formatTime(msg.createdAt)}
+                                                        {isMe && (
+                                                            msg.isRead ? <CheckCheck className="w-3 h-3 ml-1" /> : <Check className="w-3 h-3 ml-1" />
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -399,25 +565,93 @@ export default function MessagesPage() {
                             <div ref={messagesEndRef} />
                         </div>
 
-                        {/* Input Area */}
-                        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 backdrop-blur-sm">
-                            <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
-                                <button type="button" className="p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-700">
-                                    <Paperclip className="w-5 h-5" />
-                                </button>
+                        <div className="p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 backdrop-blur-sm relative">
+                            {/* File Upload Preview */}
+                            {selectedFile && !editingMessage && (
+                                <div className="absolute bottom-full left-4 mb-4 p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl flex items-center gap-4 animate-in slide-in-from-bottom-2 duration-300">
+                                    {filePreview ? (
+                                        <div className="w-12 h-12 rounded-lg overflow-hidden border border-slate-100 dark:border-slate-700">
+                                            <img src={filePreview} alt="Preview" className="w-full h-full object-cover" />
+                                        </div>
+                                    ) : (
+                                        <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                            <FileText className="w-6 h-6" />
+                                        </div>
+                                    )}
+                                    <div className="flex-1 min-w-0 pr-8">
+                                        <p className="text-sm font-bold truncate max-w-[150px]">{selectedFile.name}</p>
+                                        <p className="text-[10px] text-slate-500 uppercase">Ready to send</p>
+                                    </div>
+                                    <button 
+                                        type="button"
+                                        onClick={removeSelectedFile}
+                                        className="absolute top-2 right-2 p-1 text-slate-400 hover:text-red-500 transition-colors"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            )}
+
+                            {/* Message Editing Overlay */}
+                            {editingMessage && (
+                                <div className="absolute bottom-full left-0 w-full p-4 bg-blue-50 dark:bg-slate-800 border-t border-blue-200 dark:border-slate-700 flex items-center justify-between animate-in slide-in-from-bottom-2 duration-300">
+                                    <div className="flex items-center gap-3 min-w-0">
+                                        <div className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400">
+                                            <Edit3 className="w-4 h-4" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-xs font-bold text-blue-600 uppercase">Editing Message</p>
+                                            <p className="text-sm truncate text-slate-600 dark:text-slate-400">{editingMessage.message}</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => { setEditingMessage(null); setEditContent(''); }}
+                                        className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                                    >
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            )}
+
+                            <form onSubmit={editingMessage ? handleEditMessage : handleSendMessage} className="flex items-center space-x-2">
+                                {!editingMessage && (
+                                    <>
+                                        <input 
+                                            type="file" 
+                                            ref={fileInputRef} 
+                                            className="hidden" 
+                                            onChange={handleFileChange}
+                                            accept="image/*, application/pdf, .doc, .docx, .ppt, .pptx, .zip"
+                                        />
+                                        <button 
+                                            type="button" 
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className={cn(
+                                                "p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-full transition-all",
+                                                selectedFile ? "bg-blue-600/10 text-blue-600" : "hover:bg-slate-100 dark:hover:bg-slate-700"
+                                            )}
+                                        >
+                                            <Paperclip className="w-5 h-5" />
+                                        </button>
+                                    </>
+                                )}
                                 <input
                                     type="text"
-                                    value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
-                                    placeholder="Type a message..."
+                                    value={editingMessage ? editContent : newMessage}
+                                    onChange={(e) => editingMessage ? setEditContent(e.target.value) : setNewMessage(e.target.value)}
+                                    placeholder={editingMessage ? "Edit your message..." : (selectedFile ? "Add a caption..." : "Type a message...")}
                                     className="flex-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                                 />
                                 <button
                                     type="submit"
-                                    disabled={!newMessage.trim()}
-                                    className="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    disabled={editingMessage ? !editContent.trim() : ((!newMessage.trim() && !selectedFile) || uploading)}
+                                    className="p-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-colors relative"
                                 >
-                                    <Send className="w-5 h-5" />
+                                    {uploading ? (
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                    ) : (
+                                        editingMessage ? <Check className="w-5 h-5" /> : <Send className="w-5 h-5" />
+                                    )}
                                 </button>
                             </form>
                         </div>

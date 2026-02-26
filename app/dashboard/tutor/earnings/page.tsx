@@ -6,7 +6,7 @@ import { transactionService, Transaction } from '@/services/transaction.service'
 import { dashboardService, TutorStats } from '@/services/dashboard.service';
 import { cn } from '@/lib/utils';
 import {
-    DollarSign, TrendingUp, ArrowDownLeft, Loader2, Shield,
+    Banknote, TrendingUp, ArrowDownLeft, Loader2, Shield,
     CheckCircle, XCircle, Clock, BarChart2, Wallet, ChevronRight,
     Calendar, ArrowUpRight
 } from 'lucide-react';
@@ -119,7 +119,7 @@ export default function TutorEarningsPage() {
             {/* Summary Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {[
-                    { label: 'Total Earnings', value: `Rs. ${totalEarnings.toLocaleString()}`, icon: DollarSign, color: 'from-emerald-500 to-teal-600', sub: 'All time' },
+                    { label: 'Total Earnings', value: `Rs. ${totalEarnings.toLocaleString()}`, icon: Banknote, color: 'from-emerald-500 to-teal-600', sub: 'All time' },
                     { label: 'Pending Payout', value: `Rs. ${pendingEarnings.toLocaleString()}`, icon: Clock, color: 'from-amber-500 to-orange-500', sub: 'Processing' },
                     { label: 'Completed', value: completedTx.length.toString(), icon: CheckCircle, color: 'from-blue-500 to-blue-600', sub: 'Transactions' },
                     { label: 'Avg per Session', value: completedTx.length > 0 ? `Rs. ${Math.round(totalEarnings / completedTx.length)}` : 'Rs. 0', icon: TrendingUp, color: 'from-blue-500 to-blue-600', sub: 'Per booking' },

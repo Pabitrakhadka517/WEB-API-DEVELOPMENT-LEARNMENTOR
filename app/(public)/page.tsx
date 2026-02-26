@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { BookOpen, Users, Award, Sparkles, CheckCircle, Star, ArrowRight, GraduationCap, MessageCircle, Calendar, Globe, Zap, Shield, TrendingUp } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import Logo from '@/components/Logo';
 
 const features = [
   {
@@ -94,11 +95,8 @@ export default function HomePage() {
       {/* ======= NAVBAR ======= */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="bg-blue-600 p-1.5 rounded-xl">
-              <img src="/learnmentor.png" alt="LearnMentor" className="w-5 h-5 object-contain" />
-            </div>
-            <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">LearnMentor</span>
+          <Link href="/">
+            <Logo />
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <Link href="/about" className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">About</Link>
@@ -328,12 +326,10 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             {/* Brand */}
             <div className="md:col-span-1">
-              <div className="flex items-center gap-2.5 mb-4">
-                <div className="bg-blue-600 p-1.5 rounded-xl">
-                  <img src="/learnmentor.png" alt="LearnMentor" className="w-5 h-5 object-contain" />
-                </div>
-                <span className="text-xl font-bold text-white tracking-tight">LearnMentor</span>
-              </div>
+              <Link href="/">
+                <Logo textClassName="text-white" />
+              </Link>
+               <div className="mt-4"></div>
               <p className="text-sm leading-relaxed">
                 Empowering minds, one lesson at a time. The smartest way to connect tutors and students.
               </p>

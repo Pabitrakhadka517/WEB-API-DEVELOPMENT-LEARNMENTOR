@@ -5,7 +5,7 @@ import { useAuthStore } from '@/store/auth-store';
 import { cn } from '@/lib/utils';
 import {
     Users, Clock, Star, MessageSquare, Calendar, TrendingUp,
-    CheckCircle2, Shield, DollarSign, ChevronRight, BookOpen,
+    CheckCircle2, Shield, Banknote, ChevronRight, BookOpen,
     BarChart2, Award, Zap, ArrowUpRight, AlertCircle, FileCheck
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -13,6 +13,7 @@ import { dashboardService, TutorStats } from '@/services/dashboard.service';
 import { bookingService, Booking } from '@/services/booking.service';
 import { transactionService, Transaction } from '@/services/transaction.service';
 import Link from 'next/link';
+import Logo from '@/components/Logo';
 
 // Donut chart for earnings
 const DonutChart = ({ percentage, color = '#2563eb' }: { percentage: number; color?: string }) => {
@@ -172,9 +173,12 @@ export default function TutorDashboard() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <div className="flex items-center gap-2 mb-1">
-                        <img src="/learnmentor.png" alt="LearnMentor" className="w-5 h-5 object-contain" />
-                        <p className="text-emerald-600 dark:text-emerald-400 text-sm font-bold uppercase tracking-widest">Tutor Hub</p>
+                    <div className="flex items-center gap-4 mb-4">
+                        <Logo 
+                            showText={false} 
+                            containerClassName="w-12 h-12 shadow-sm" 
+                        />
+                        <p className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-[0.2em]">Tutor Dashboard</p>
                     </div>
                     <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">
                         Welcome, {user?.name?.split(' ')[0] || 'Teacher'}! <span className="animate-bounce inline-block">👨‍🏫</span>
@@ -384,7 +388,7 @@ export default function TutorDashboard() {
                                 { href: '/dashboard/tutor/availability', icon: Calendar, label: 'Manage Availability', color: 'text-blue-600 dark:text-blue-400' },
                                 { href: '/dashboard/study', icon: BookOpen, label: 'Study Materials', color: 'text-blue-600 dark:text-blue-400' },
                                 { href: '/dashboard/tutor/students', icon: Users, label: 'My Students', color: 'text-blue-600 dark:text-blue-400' },
-                                { href: '/dashboard/tutor/earnings', icon: DollarSign, label: 'Earnings & Payouts', color: 'text-emerald-700 dark:text-emerald-400' },
+                                { href: '/dashboard/tutor/earnings', icon: Banknote, label: 'Earnings & Payouts', color: 'text-emerald-700 dark:text-emerald-400' },
                                 { href: '/dashboard/tutor/reviews', icon: Star, label: 'Reviews & Ratings', color: 'text-amber-600 dark:text-amber-400' },
                                 { href: '/dashboard/tutor/verification', icon: FileCheck, label: 'Verification Panel', color: 'text-blue-600 dark:text-blue-400' },
                             ].map((item) => (

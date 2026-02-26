@@ -19,17 +19,22 @@ import {
     Bell,
     CheckCircle2,
     ShieldCheck,
-    DollarSign,
+    Banknote,
     Star,
     TrendingUp,
     FileCheck,
     Wallet,
-    GraduationCap
+    GraduationCap,
+    Play,
+    BarChart2,
+    Target,
+    CalendarCheck2
 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { cn } from '@/lib/utils';
 import { AnnouncementBanner } from '@/components/AnnouncementBanner';
 import ThemeToggle from '@/components/ThemeToggle';
+import Logo from '@/components/Logo';
 
 interface SidebarItemProps {
     href: string;
@@ -95,7 +100,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const handleLogout = async () => {
         try {
             setIsLoggingOut(true);
-            
+
             // Call logout API endpoint if needed
             const token = localStorage.getItem('accessToken');
             if (token) {
@@ -115,7 +120,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
             // Clear local storage and state
             logout();
-            
+
             // Redirect to login page
             router.push('/login');
         } catch (error) {
@@ -134,7 +139,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         { href: '/dashboard/bookings', icon: Calendar, label: 'My Bookings' },
         { href: '/dashboard/study', icon: BookOpen, label: 'Library' },
         { href: '/dashboard/messages', icon: MessageCircle, label: 'Messages' },
-        { href: '/dashboard/wallet', icon: Wallet, label: 'Wallet & Payments' },
+        { href: '/dashboard/wallet', icon: Banknote, label: 'Wallet & Payments' },
         { href: '/dashboard/notifications', icon: Bell, label: 'Notifications' },
         { href: '/dashboard/preferences', icon: Settings, label: 'Preferences' },
         { href: '/dashboard/profile', icon: Settings, label: 'Profile / Settings' },
@@ -179,11 +184,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 )}
             >
                 <div className="flex flex-col h-full">
-                    <div className="flex items-center space-x-3 mb-10 px-8 pt-6 flex-shrink-0">
-                        <div className="bg-white/20 dark:bg-blue-600 p-2 rounded-xl">
-                            <img src="/learnmentor.png" alt="LearnMentor" className="w-6 h-6 object-contain" />
-                        </div>
-                        <span className="text-xl font-bold tracking-tight text-white">LearnMentor</span>
+                    <div className="mb-10 px-8 pt-6 flex-shrink-0">
+                        <Link href="/">
+                            <Logo 
+                                textClassName="text-white text-2xl" 
+                                containerClassName="w-14 h-14"
+                            />
+                        </Link>
                     </div>
 
                     <nav className="flex-1 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-400 dark:scrollbar-thumb-slate-600 scrollbar-track-transparent hover:scrollbar-thumb-blue-300 dark:hover:scrollbar-thumb-slate-500 px-6">
@@ -216,16 +223,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <button
                                 onClick={handleLogout}
                                 disabled={isLoggingOut}
-                                className={`flex items-center space-x-3 px-4 py-3 w-full rounded-xl transition-all duration-200 group ${
-                                    isLoggingOut 
-                                        ? 'bg-red-400/20 dark:bg-red-500/10 text-red-200 dark:text-red-500 cursor-not-allowed' 
+                                className={`flex items-center space-x-3 px-4 py-3 w-full rounded-xl transition-all duration-200 group ${isLoggingOut
+                                        ? 'bg-red-400/20 dark:bg-red-500/10 text-red-200 dark:text-red-500 cursor-not-allowed'
                                         : 'text-red-200 dark:text-red-500 hover:bg-red-400/20 dark:hover:bg-red-500/10 hover:text-red-100 dark:hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-400/30'
-                                }`}
+                                    }`}
                                 aria-label="Logout from your account"
                             >
-                                <LogOut className={`w-5 h-5 transition-colors ${
-                                    isLoggingOut ? 'animate-pulse text-red-300 dark:text-red-400' : 'group-hover:text-red-100 dark:group-hover:text-red-500'
-                                }`} />
+                                <LogOut className={`w-5 h-5 transition-colors ${isLoggingOut ? 'animate-pulse text-red-300 dark:text-red-400' : 'group-hover:text-red-100 dark:group-hover:text-red-500'
+                                    }`} />
                                 <span className="font-medium">
                                     {isLoggingOut ? 'Logging out...' : 'Logout'}
                                 </span>
@@ -260,13 +265,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             )}>
                 <AnnouncementBanner />
                 <header className="lg:hidden h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-40 shadow-sm">
-                    <div className="flex items-center gap-2">
-                        <img src="/learnmentor.png" alt="LearnMentor" className="w-6 h-6 object-contain" />
-                        <span className="font-bold text-slate-900 dark:text-white">LearnMentor</span>
-                    </div>
+                    <Link href="/">
+                        <Logo 
+                            showText={false} 
+                            containerClassName="w-11 h-11" 
+                        />
+                    </Link>
                     <div className="flex items-center space-x-3">
                         <ThemeToggle variant="button" size="sm" />
-                        
+
                         {/* Mobile Logout Button */}
                         <button
                             onClick={handleLogout}
@@ -276,7 +283,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                         >
                             <LogOut className="w-5 h-5" />
                         </button>
-                        
+
                         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 text-slate-500 dark:text-slate-400">
                             {isSidebarOpen ? <X /> : <Menu />}
                         </button>
