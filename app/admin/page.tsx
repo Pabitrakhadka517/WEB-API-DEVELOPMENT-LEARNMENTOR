@@ -12,7 +12,6 @@ import {
     CreditCard, TrendingUpDown, PiggyBank
 } from 'lucide-react';
 import Link from 'next/link';
-import Logo from '@/components/Logo';
 
 function StatCard({ label, value, icon: Icon, color, sub, trend, prefix = '' }: {
     label: string; value: number; icon: React.ElementType; color: string; sub: string; trend?: number; prefix?: string;
@@ -132,10 +131,6 @@ export default function AdminOverviewPage() {
             <div className="flex items-center justify-between">
                 <div>
                     <div className="flex items-center gap-4 mb-3">
-                        <Logo 
-                            showText={false} 
-                            containerClassName="w-14 h-14" 
-                        />
                         <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                             Platform <span className="text-blue-600">Overview</span>
                         </h1>

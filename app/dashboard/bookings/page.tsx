@@ -337,7 +337,7 @@ export default function BookingsPage() {
                                         </>
                                     )}
 
-                                    {['CONFIRMED', 'PAID'].includes(booking.status) && (
+                                    {booking.status === 'PAID' && (
                                         <button
                                             onClick={() => handleComplete(booking._id)}
                                             className="flex items-center justify-center px-4 py-3 bg-blue-600 text-white hover:bg-blue-500 rounded-xl text-xs font-bold uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20"
@@ -368,7 +368,7 @@ export default function BookingsPage() {
                                     )}
 
                                     {/* Payment Button for Students */}
-                                    {booking.status === 'CONFIRMED' && isStudent && booking.paymentStatus !== 'DONE' && (
+                                    {booking.status === 'CONFIRMED' && isStudent && booking.paymentStatus !== 'paid' && (
                                         <button
                                             onClick={() => handlePayment(booking._id)}
                                             disabled={paymentLoading === booking._id}

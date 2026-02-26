@@ -366,12 +366,12 @@ export default function TutorsPage() {
                                     <div className="flex items-center space-x-3">
                                         <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-xl overflow-hidden shrink-0">
                                             {tutor.profileImage ? (
-                                                <img src={tutor.profileImage} alt={tutor.fullName} className="w-full h-full object-cover" />
-                                            ) : tutor.fullName[0]}
+                                                <img src={tutor.profileImage} alt={tutor.fullName || 'Tutor'} className="w-full h-full object-cover" />
+                                            ) : (tutor.fullName?.[0] || 'T')}
                                         </div>
                                         <div>
                                             <div className="flex items-center gap-1.5 mb-0.5">
-                                                <h3 className="font-bold text-slate-900 dark:text-white">{tutor.fullName}</h3>
+                                                <h3 className="font-bold text-slate-900 dark:text-white">{tutor.fullName || 'Anonymous Tutor'}</h3>
                                                 {tutor.verificationStatus === 'VERIFIED' && (
                                                     <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 fill-blue-100 dark:fill-blue-900/30" />
                                                 )}

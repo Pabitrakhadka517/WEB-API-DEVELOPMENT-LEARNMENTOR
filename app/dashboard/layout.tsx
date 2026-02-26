@@ -83,13 +83,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         if (!mounted || !user) return;
 
         const role = user.role;
+        const isTutorRoute = pathname === '/dashboard/tutor' || pathname?.startsWith('/dashboard/tutor/');
+        const isStudentRoute = pathname === '/dashboard/student' || pathname?.startsWith('/dashboard/student/');
+
         // Student accessing tutor-only routes
-        if (pathname?.startsWith('/dashboard/tutor') && role === 'STUDENT') {
+        if (isTutorRoute && role === 'STUDENT') {
             router.replace('/dashboard/student');
             return;
         }
         // Tutor accessing student-only routes
-        if (pathname?.startsWith('/dashboard/student') && role === 'TUTOR') {
+        if (isStudentRoute && role === 'TUTOR') {
             router.replace('/dashboard/tutor');
             return;
         }

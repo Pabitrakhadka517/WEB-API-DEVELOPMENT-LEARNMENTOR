@@ -7,12 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import {
   User, Mail, Lock, Eye, EyeOff, GraduationCap, Users,
-  ArrowRight, AlertCircle, Loader2, CheckCircle2
+  ArrowRight, AlertCircle, Loader2, CheckCircle2, Star, Sparkles
 } from 'lucide-react';
 import { authService } from '@/services/auth.service';
 import { RegisterSchema, type RegisterFormData } from '../schema';
 import { cn } from '@/lib/utils';
-import Logo from '@/components/Logo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -73,12 +72,6 @@ export default function RegisterPage() {
       <div className="w-full max-w-lg relative z-10 animate-fade-in-up">
         {/* Brand Header */}
         <div className="text-center mb-10">
-          <div className="flex justify-center mb-8">
-            <Logo 
-              showText={false} 
-              containerClassName="w-20 h-20 shadow-2xl" 
-            />
-          </div>
           <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Create Your Account</h1>
           <p className="text-slate-500 dark:text-slate-400 mt-2">Join LearnMentor and start your learning adventure</p>
         </div>

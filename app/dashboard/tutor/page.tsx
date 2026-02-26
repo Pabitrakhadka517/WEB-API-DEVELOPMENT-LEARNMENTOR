@@ -13,7 +13,6 @@ import { dashboardService, TutorStats } from '@/services/dashboard.service';
 import { bookingService, Booking } from '@/services/booking.service';
 import { transactionService, Transaction } from '@/services/transaction.service';
 import Link from 'next/link';
-import Logo from '@/components/Logo';
 
 // Donut chart for earnings
 const DonutChart = ({ percentage, color = '#2563eb' }: { percentage: number; color?: string }) => {
@@ -174,10 +173,6 @@ export default function TutorDashboard() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
-                        <Logo 
-                            showText={false} 
-                            containerClassName="w-12 h-12 shadow-sm" 
-                        />
                         <p className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-[0.2em]">Tutor Dashboard</p>
                     </div>
                     <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">

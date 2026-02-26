@@ -34,13 +34,16 @@ export function middleware(request: NextRequest) {
 
     const role = roleCookie.toUpperCase();
 
+    const isTutorRoute = pathname === '/dashboard/tutor' || pathname.startsWith('/dashboard/tutor/');
+    const isStudentRoute = pathname === '/dashboard/student' || pathname.startsWith('/dashboard/student/');
+
     // Enforce STUDENT cannot access tutor dashboard
-    if (pathname.startsWith('/dashboard/tutor') && role === 'STUDENT') {
+    if (isTutorRoute && role === 'STUDENT') {
       return NextResponse.redirect(new URL('/dashboard/student?error=role_mismatch', request.url));
     }
 
     // Enforce TUTOR cannot access student dashboard
-    if (pathname.startsWith('/dashboard/student') && role === 'TUTOR') {
+    if (isStudentRoute && role === 'TUTOR') {
       return NextResponse.redirect(new URL('/dashboard/tutor?error=role_mismatch', request.url));
     }
 

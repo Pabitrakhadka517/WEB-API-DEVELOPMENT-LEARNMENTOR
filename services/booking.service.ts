@@ -17,7 +17,8 @@ export interface Booking {
     startTime: string; // ISO date string
     endTime: string;
     status: 'PENDING' | 'CONFIRMED' | 'PAID' | 'COMPLETED' | 'CANCELLED' | 'REJECTED';
-    paymentStatus?: 'UNPAID' | 'DONE';
+    sessionStatus?: 'booked' | 'confirmed' | 'completed' | 'cancelled';
+    paymentStatus?: 'pending' | 'paid' | 'failed';
     notes?: string;
     createdAt: string;
     price: number;

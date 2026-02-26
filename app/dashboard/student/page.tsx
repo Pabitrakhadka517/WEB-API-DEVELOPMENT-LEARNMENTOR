@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Logo from '@/components/Logo';
 import { dashboardService, StudentStats } from '@/services/dashboard.service';
 import { bookingService, Booking } from '@/services/booking.service';
 import { tutorService, Tutor } from '@/services/tutor.service';
@@ -179,10 +178,6 @@ export default function StudentDashboard() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-4 mb-4">
-                        <Logo 
-                            showText={false} 
-                            containerClassName="w-12 h-12 shadow-sm" 
-                        />
                         <p className="text-blue-600 dark:text-blue-400 text-sm font-bold uppercase tracking-[0.2em]">Student Dashboard</p>
                     </div>
                     <h1 className="text-4xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">
@@ -369,11 +364,11 @@ export default function StudentDashboard() {
                             <div key={tutor._id} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 hover:border-blue-300 dark:hover:border-blue-700 transition-all group">
                                 <div className="flex items-center gap-3 mb-3">
                                     <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold overflow-hidden shrink-0">
-                                        {tutor.profileImage ? <img src={tutor.profileImage} alt={tutor.fullName} className="w-full h-full object-cover" /> : tutor.fullName[0]}
+                                        {tutor.profileImage ? <img src={tutor.profileImage} alt={tutor.fullName || 'Tutor'} className="w-full h-full object-cover" /> : (tutor.fullName?.[0] || 'T')}
                                     </div>
                                     <div className="min-w-0">
                                         <div className="flex items-center gap-1">
-                                            <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{tutor.fullName}</p>
+                                            <p className="font-bold text-slate-900 dark:text-white text-sm truncate">{tutor.fullName || 'Anonymous Tutor'}</p>
                                             {tutor.verificationStatus === 'VERIFIED' && (
                                                 <CheckCircle2 className="w-3 h-3 text-blue-600 dark:text-blue-400 shrink-0" />
                                             )}
