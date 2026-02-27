@@ -12,7 +12,7 @@ function PaymentSuccessContent() {
     const [message, setMessage] = useState('Verifying your payment...');
 
     useEffect(() => {
-        const verify = async () => {
+        const verify = async (retries = 2) => {
             const dataParam = searchParams.get('data');
             if (!dataParam) {
                 setStatus('error');
@@ -25,7 +25,7 @@ function PaymentSuccessContent() {
                 const decodedData = JSON.parse(atob(dataParam));
                 console.log('Decoded eSewa Data:', decodedData);
 
-                const { transaction_code, transaction_uuid, status: esewaStatus, total_amount, purchase_order_id } = decodedData;
+                const { transaction_code, transaction_uuid, status: esewaStatus } = decodedData;
 
                 if (esewaStatus !== 'COMPLETE') {
                     setStatus('error');
@@ -34,38 +34,27 @@ function PaymentSuccessContent() {
                 }
 
                 // 2. Call backend to verify and update DB
-                // Note: purchase_order_id from eSewa is usually our transactionId if we passed it in transaction_uuid
-                // Wait, in my init, I used transaction_uuid for the UUID and transactionId for my internal ID?
-                // Actually, eSewa redirects with whatever we sent in transaction_uuid?
-                // Let's check initTransaction. 
-                // transaction_uuid is what eSewa returns as transaction_uuid.
-                // We need to find the transaction by this UUID or by purchase_order_id if we used transactionId there.
-                // In my frontend handlePayment:
-                // transaction_uuid: data.transaction_uuid (which is transaction.transactionUuid)
-
-                // My verify endpoint: /transactions/bookings/transaction/:tId/pay
-                // I need the transactionId (tId). 
-                // Wait, how do I get tId from eSewa redirect?
-                // I can pass it in transaction_uuid or another field?
-                // eSewa v2's transaction_uuid is the primary identifier we send.
-                // It's capped at something. 
-
-                // Let's modify the init to return transactionUuid as the key.
-                // Or better, my verify endpoint should take transactionUuid instead of ID.
-
-                // BUT, looking at dataParam decode logic:
-                // The guide says: JSON to get transaction_code and transaction_uuid.
-                // So I will update my backend verify endpoint to find by transactionUuid.
-
-                await paymentService.verifyPayment(transaction_uuid, transaction_code);
+                // Send full eSewa callback data for server-side signature verification
+                await paymentService.verifyPayment(transaction_uuid, decodedData);
 
                 setStatus('success');
                 setMessage('Payment successful! Your booking is now confirmed and chatting is enabled.');
 
             } catch (err: any) {
                 console.error('Verification error:', err);
+                const statusCode = err.response?.status;
+                const errorMessage = err.response?.data?.message || err.message || 'Failed to verify payment.';
+
+                // Retry on 502 (eSewa gateway issues) or network errors
+                if (retries > 0 && (statusCode === 502 || !err.response)) {
+                    console.log(`Retrying verification... (${retries} attempts left)`);
+                    setMessage('Verifying payment... retrying...');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    return verify(retries - 1);
+                }
+
                 setStatus('error');
-                setMessage(err.response?.data?.message || err.message || 'Failed to verify payment.');
+                setMessage(errorMessage);
             }
         };
 

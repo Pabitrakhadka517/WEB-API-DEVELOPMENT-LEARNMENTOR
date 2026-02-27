@@ -32,10 +32,20 @@ export const paymentService = {
 
     /**
      * Verify payment on backend
+     * Sends the full decoded eSewa callback data for server-side signature verification
      */
-    verifyPayment: async (transactionId: string, transactionCode: string) => {
+    verifyPayment: async (transactionId: string, esewaData: {
+        transaction_code: string;
+        status: string;
+        total_amount: string;
+        transaction_uuid: string;
+        product_code: string;
+        signed_field_names: string;
+        signature: string;
+    }) => {
         const response = await api.post(`/transactions/bookings/transaction/${transactionId}/pay`, {
-            transactionCode
+            transactionCode: esewaData.transaction_code,
+            esewaCallbackData: esewaData
         });
         return response.data;
     }
