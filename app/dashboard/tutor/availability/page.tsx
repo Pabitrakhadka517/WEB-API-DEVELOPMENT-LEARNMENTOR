@@ -26,6 +26,13 @@ const TIME_OPTIONS = Array.from({ length: 24 }, (_, i) => {
 
 import { tutorService, AvailabilitySlot } from '@/services/tutor.service';
 
+const toLocalDateKey = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 export default function TutorAvailabilityPage() {
     const { user } = useAuthStore();
     const [currentDate, setCurrentDate] = useState(new Date());
@@ -51,7 +58,7 @@ export default function TutorAvailabilityPage() {
                 // Map backend slots to frontend format
                 const mapped = res.slots.map(s => ({
                     id: s._id,
-                    date: new Date(s.startTime).toISOString().split('T')[0],
+                    date: toLocalDateKey(new Date(s.startTime)),
                     startTime: new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
                     endTime: new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
                     isBooked: s.isBooked
@@ -78,7 +85,7 @@ export default function TutorAvailabilityPage() {
     const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date().toISOString().split('T')[0];
+    const today = toLocalDateKey(new Date());
 
     const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
     const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
@@ -356,7 +363,7 @@ export default function TutorAvailabilityPage() {
                         const now = new Date();
                         const dayDate = new Date(now);
                         dayDate.setDate(now.getDate() - now.getDay() + i);
-                        const dateStr = dayDate.toISOString().split('T')[0];
+                        const dateStr = toLocalDateKey(dayDate);
                         const daySlots = slots.filter(s => s.date === dateStr);
                         const blocked = isDayBlocked(dateStr);
 

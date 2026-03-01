@@ -1,13 +1,13 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { adminService, AdminUser } from '@/services/admin.service';
+import React, { useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { adminService, AdminApiError, AdminUser } from '@/services/admin.service';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 import {
-    Users, GraduationCap, UserCog, Loader2, Search,
-    RefreshCw, CheckCircle2, XCircle, Clock, ChevronRight,
-    Filter, MoreVertical, Trash2, Edit3, UserCheck, UserX
+    Users, Loader2, Search,
+    RefreshCw, CheckCircle2, XCircle, Clock,
+    Filter, Trash2, Edit3, AlertCircle
 } from 'lucide-react';
 
 // ─── Role Badge ───────────────────────────────────────────────────────────────
@@ -37,54 +37,95 @@ function VerifBadge({ status }: { status?: string }) {
 }
 
 export default function AdminUsersPage() {
-    const [users, setUsers] = useState<AdminUser[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
+    const queryClient = useQueryClient();
     const [searchTerm, setSearchTerm] = useState('');
     const [roleFilter, setRoleFilter] = useState<'ALL' | 'STUDENT' | 'TUTOR' | 'ADMIN'>('ALL');
     const [statusFilter, setStatusFilter] = useState<'ALL' | 'Active' | 'Inactive'>('ALL');
     const [page, setPage] = useState(1);
-    const [pagination, setPagination] = useState({ total: 0, totalPages: 0, limit: 10 });
+    const [editUser, setEditUser] = useState<AdminUser | null>(null);
+    const [deleteUser, setDeleteUser] = useState<AdminUser | null>(null);
+    const [editForm, setEditForm] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        role: 'STUDENT' as 'STUDENT' | 'TUTOR' | 'ADMIN',
+        status: 'Active' as 'Active' | 'Inactive',
+    });
 
-    const fetchUsers = useCallback(async (silent = false) => {
-        if (!silent) setLoading(true);
-        else setRefreshing(true);
-        try {
-            const res = await adminService.getAllUsers(
+    const usersQuery = useQuery({
+        queryKey: ['admin-users', page, roleFilter, statusFilter],
+        queryFn: () =>
+            adminService.getAllUsers(
                 page,
                 10,
-                roleFilter === 'ALL' ? undefined : roleFilter as any,
+                roleFilter === 'ALL' ? undefined : roleFilter,
                 statusFilter === 'ALL' ? undefined : statusFilter
-            );
-            setUsers(res.users);
-            setPagination(res.pagination);
-        } catch (err) {
-            console.error('Failed to fetch users', err);
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
-    }, [page, roleFilter, statusFilter]);
+            ),
+        placeholderData: (previousData) => previousData,
+    });
 
-    useEffect(() => {
-        fetchUsers();
-    }, [fetchUsers]);
+    const updateMutation = useMutation({
+        mutationFn: (payload: { id: string; data: typeof editForm }) =>
+            adminService.updateUser(payload.id, {
+                ...payload.data,
+                fullName: payload.data.name,
+                isActive: payload.data.status === 'Active',
+            }),
+        onSuccess: async () => {
+            setEditUser(null);
+            await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+        },
+    });
 
-    const handleDeleteUser = async (userId: string, name: string) => {
-        if (!confirm(`Are you sure you want to delete ${name}?`)) return;
-        try {
-            await adminService.deleteUser(userId);
-            fetchUsers(true);
-        } catch (err) {
-            alert('Failed to delete user');
-        }
+    const deleteMutation = useMutation({
+        mutationFn: (userId: string) => adminService.deleteUser(userId),
+        onSuccess: async () => {
+            setDeleteUser(null);
+            await queryClient.invalidateQueries({ queryKey: ['admin-users'] });
+        },
+    });
+
+    const users = usersQuery.data?.users ?? [];
+    const pagination = usersQuery.data?.pagination ?? { total: 0, totalPages: 0, limit: 10, page: 1 };
+    const loading = usersQuery.isLoading;
+    const refreshing = usersQuery.isRefetching;
+    const queryError = usersQuery.error as AdminApiError | null;
+
+    const filteredUsers = useMemo(
+        () =>
+            users.filter((u) =>
+                !searchTerm ||
+                u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+            ),
+        [users, searchTerm]
+    );
+
+    const openEditModal = (user: AdminUser) => {
+        setEditUser(user);
+        setEditForm({
+            name: user.name || '',
+            email: user.email || '',
+            phone: user.phone === 'N/A' ? '' : user.phone || '',
+            address: user.address || '',
+            role: (user.role?.toUpperCase() as 'STUDENT' | 'TUTOR' | 'ADMIN') || 'STUDENT',
+            status: user.status === 'Inactive' ? 'Inactive' : 'Active',
+        });
     };
 
-    const filteredUsers = users.filter(u =>
-        !searchTerm ||
-        u.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const submitEdit = async () => {
+        if (!editUser) return;
+        await updateMutation.mutateAsync({
+            id: editUser.id,
+            data: editForm,
+        });
+    };
+
+    const submitDelete = async () => {
+        if (!deleteUser) return;
+        await deleteMutation.mutateAsync(deleteUser.id);
+    };
 
     return (
         <div className="p-8 space-y-8 animate-in fade-in duration-500">
@@ -98,7 +139,7 @@ export default function AdminUsersPage() {
                 </div>
                 <div className="flex items-center gap-3">
                     <button
-                        onClick={() => fetchUsers(true)}
+                        onClick={() => usersQuery.refetch()}
                         disabled={refreshing}
                         className="p-3 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-2xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-all shadow-lg"
                     >
@@ -116,6 +157,13 @@ export default function AdminUsersPage() {
                     </div>
                 </div>
             </div>
+
+            {queryError && (
+                <div className="p-4 rounded-2xl border border-red-500/20 bg-red-500/10 text-red-500 text-sm font-semibold flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    {queryError.message}
+                </div>
+            )}
 
             {/* Filters Bar */}
             <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-4 flex flex-wrap items-center gap-6 shadow-sm">
@@ -200,7 +248,7 @@ export default function AdminUsersPage() {
                                     </td>
                                 </tr>
                             ) : filteredUsers.map(u => (
-                                <tr key={u.id} className="hover:bg-white/[0.04] transition-all group">
+                                <tr key={u.id} className="hover:bg-white/4 transition-all group">
                                     <td className="px-8 py-5">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold text-lg border border-slate-100 dark:border-slate-700 overflow-hidden shrink-0 group-hover:scale-110 transition-transform">
@@ -243,21 +291,14 @@ export default function AdminUsersPage() {
                                     </td>
                                     <td className="px-8 py-5 text-right">
                                         <div className="flex items-center justify-end gap-3 translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-                                            <Link
-                                                href={`/admin/users/${u.id}`}
-                                                className="p-3 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-2xl border border-slate-200 dark:border-slate-700 transition-all"
-                                                title="Full Profile"
-                                            >
-                                                <ChevronRight className="w-5 h-5" />
-                                            </Link>
-                                            <Link
-                                                href={`/admin/users/${u.id}/edit`}
+                                            <button
+                                                onClick={() => openEditModal(u)}
                                                 className="p-3 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl border border-blue-200 dark:border-blue-800 transition-all font-bold text-[10px] uppercase tracking-widest flex items-center gap-2"
                                             >
                                                 <Edit3 className="w-4 h-4" /> Edit
-                                            </Link>
+                                            </button>
                                             <button
-                                                onClick={() => handleDeleteUser(u.id, u.name || '')}
+                                                onClick={() => setDeleteUser(u)}
                                                 className="p-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-2xl border border-red-500/20 transition-all"
                                                 title="Delete User"
                                             >
@@ -294,6 +335,75 @@ export default function AdminUsersPage() {
                     </div>
                 </div>
             </div>
+
+            {editUser && (
+                <div className="fixed inset-0 z-60 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="w-full max-w-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 space-y-5">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Edit User</h3>
+                            <button onClick={() => setEditUser(null)} className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300">✕</button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input value={editForm.name} onChange={(e) => setEditForm((s) => ({ ...s, name: e.target.value }))} placeholder="Name" className="px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                            <input value={editForm.email} onChange={(e) => setEditForm((s) => ({ ...s, email: e.target.value }))} placeholder="Email" className="px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                            <input value={editForm.phone} onChange={(e) => setEditForm((s) => ({ ...s, phone: e.target.value }))} placeholder="Phone" className="px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                            <input value={editForm.address} onChange={(e) => setEditForm((s) => ({ ...s, address: e.target.value }))} placeholder="Address" className="px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700" />
+                            <select value={editForm.role} onChange={(e) => setEditForm((s) => ({ ...s, role: e.target.value as 'STUDENT' | 'TUTOR' | 'ADMIN' }))} className="px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                <option value="STUDENT">STUDENT</option>
+                                <option value="TUTOR">TUTOR</option>
+                                <option value="ADMIN">ADMIN</option>
+                            </select>
+                            <select value={editForm.status} onChange={(e) => setEditForm((s) => ({ ...s, status: e.target.value as 'Active' | 'Inactive' }))} className="px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                        </div>
+                        {updateMutation.error && (
+                            <div className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                                {(updateMutation.error as AdminApiError).message}
+                            </div>
+                        )}
+                        <div className="flex items-center justify-end gap-3">
+                            <button onClick={() => setEditUser(null)} className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">Cancel</button>
+                            <button
+                                onClick={submitEdit}
+                                disabled={updateMutation.isPending}
+                                className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {updateMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {deleteUser && (
+                <div className="fixed inset-0 z-60 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+                    <div className="w-full max-w-md bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6 space-y-5">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Delete User</h3>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                            Are you sure you want to delete <span className="font-semibold text-slate-900 dark:text-white">{deleteUser.name}</span>? This action cannot be undone.
+                        </p>
+                        {deleteMutation.error && (
+                            <div className="text-sm text-red-500 bg-red-500/10 border border-red-500/20 rounded-xl p-3">
+                                {(deleteMutation.error as AdminApiError).message}
+                            </div>
+                        )}
+                        <div className="flex items-center justify-end gap-3">
+                            <button onClick={() => setDeleteUser(null)} className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300">Cancel</button>
+                            <button
+                                onClick={submitDelete}
+                                disabled={deleteMutation.isPending}
+                                className="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {deleteMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

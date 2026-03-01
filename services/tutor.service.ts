@@ -72,6 +72,16 @@ export const tutorService = {
     },
 
     /**
+     * Get public tutor availability (future + unbooked)
+     */
+    getTutorAvailability: async (id: string, startDate?: string, endDate?: string): Promise<{ success: boolean; slots: AvailabilitySlot[] }> => {
+        const response = await api.get(`/tutors/${id}/availability`, {
+            params: { startDate, endDate }
+        });
+        return response.data;
+    },
+
+    /**
      * Get authenticated tutor's availability
      */
     getMyAvailability: async (startDate?: string, endDate?: string): Promise<{ success: boolean; slots: AvailabilitySlot[] }> => {

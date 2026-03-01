@@ -180,6 +180,7 @@ export default function UserDetailPage() {
                                         <p className="text-lg font-bold text-slate-900 dark:text-white">{user.speciality}</p>
                                     </div>
                                     <div className="space-y-2">
+                                        <div className="flex items-center gap-2 text-slate-500 mb-2">
                                             <Banknote className="w-4 h-4" />
                                             <span className="text-[10px] font-bold uppercase tracking-widest">Hourly Rate</span>
                                         </div>

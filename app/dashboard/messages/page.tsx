@@ -16,6 +16,19 @@ const getSocketUrl = () => {
 
 const SOCKET_URL = getSocketUrl();
 
+const dedupeMessagesById = (items: Message[]): Message[] => {
+    const seen = new Set<string>();
+    const unique: Message[] = [];
+
+    for (const item of items) {
+        if (!item?._id || seen.has(item._id)) continue;
+        seen.add(item._id);
+        unique.push(item);
+    }
+
+    return unique;
+};
+
 export default function MessagesPage() {
     const { user, accessToken } = useAuthStore();
     const router = useRouter();
@@ -91,9 +104,7 @@ export default function MessagesPage() {
                 setMessages((prev) => {
                     // Check if message belongs to current chat
                     if (selectedChat && ((message as any).chatRoom === selectedChat._id)) {
-                        // Avoid duplicates (e.g. sender receiving their own message)
-                        if (prev.some(m => m._id === message._id)) return prev;
-                        return [...prev, message];
+                        return dedupeMessagesById([...prev, message]);
                     }
                     return prev;
                 });
@@ -178,7 +189,7 @@ export default function MessagesPage() {
 
                 const data = await chatService.getMessages(selectedChat._id);
                 if (data.success) {
-                    setMessages(data.messages);
+                    setMessages(dedupeMessagesById(data.messages));
                 }
             } catch (err) {
                 console.warn('⚠️ Failed to fetch messages:', err);
@@ -238,7 +249,7 @@ export default function MessagesPage() {
 
         try {
             const message = await chatService.sendMessage(selectedChat._id, msgContent, fileToSend as File);
-            setMessages(prev => [...prev, message]);
+            setMessages(prev => dedupeMessagesById([...prev, message]));
 
             // Update chat list snippet
             setChats(prev => prev.map(c => {
@@ -479,9 +490,10 @@ export default function MessagesPage() {
                                     const currentUserId = user?.id || (user as any)?._id;
                                     const senderId = typeof msg.sender === 'string' ? msg.sender : msg.sender?._id;
                                     const isMe = senderId === currentUserId;
+                                    const messageKey = msg._id ? `${msg._id}-${idx}` : `msg-${idx}-${msg.createdAt}`;
 
                                     return (
-                                        <div key={msg._id || idx} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
+                                        <div key={messageKey} className={cn("flex", isMe ? "justify-end" : "justify-start")}>
                                             <div className={cn(
                                                 "max-w-[75%] rounded-2xl overflow-hidden",
                                                 isMe ? "rounded-tr-none" : "rounded-tl-none"

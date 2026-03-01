@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/auth-store';
 import {
-    Shield, BarChart2, Users, Megaphone, LogOut, ChevronRight
+    Shield, BarChart2, Users, Megaphone, LogOut, ChevronRight, GraduationCap, LineChart
 } from 'lucide-react';
 
 import Logo from '@/components/Logo';
@@ -23,12 +23,14 @@ export default function AdminSidebar({ userName }: { userName: string }) {
 
     const navItems = [
         { icon: BarChart2, label: 'Overview & Stats', href: '/admin' },
+        { icon: LineChart, label: 'Statistics', href: '/admin/statistics' },
         { icon: Users, label: 'All Users', href: '/admin/users' },
+        { icon: GraduationCap, label: 'Tutors', href: '/admin/tutors' },
         { icon: Megaphone, label: 'Announcements', href: '/admin/announcements' },
     ];
 
     return (
-        <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-blue-700 to-blue-800 dark:bg-slate-800 dark:from-slate-800 dark:to-slate-800 border-r border-blue-600 dark:border-slate-700 flex flex-col shadow-lg">
+        <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-linear-to-b from-blue-700 to-blue-800 dark:bg-slate-800 dark:from-slate-800 dark:to-slate-800 border-r border-blue-600 dark:border-slate-700 flex flex-col shadow-lg">
             <div className="flex items-center gap-3 px-6 py-6 border-b border-blue-500/40 dark:border-slate-700">
                 <Link href="/" className="mb-2">
                     <Logo 

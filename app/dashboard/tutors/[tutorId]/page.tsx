@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { tutorService, bookingService, reviewService, chatService, Tutor, Review } from '@/services';
+import io from 'socket.io-client';
 import {
     Loader2, Star, MessageCircle, Banknote, BookOpen,
     CheckCircle2, Globe, Shield, Calendar, ArrowLeft,
@@ -12,17 +13,38 @@ import {
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth-store';
 
+const getSocketUrl = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+    return apiUrl.replace(/\/api\/?$/, '');
+};
+
 export default function TutorProfilePage() {
     const router = useRouter();
     const params = useParams();
     const tutorId = params.tutorId as string;
-    const { user } = useAuthStore();
+    const { user, accessToken } = useAuthStore();
 
     const [tutor, setTutor] = useState<Tutor | null>(null);
+    const [availableSlots, setAvailableSlots] = useState<Tutor['availableSlots']>([]);
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
     const [reviewsLoading, setReviewsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    const refreshAvailability = async () => {
+        if (!tutorId) {
+            return;
+        }
+
+        try {
+            const response = await tutorService.getTutorAvailability(tutorId);
+            if (response.success) {
+                setAvailableSlots(response.slots);
+            }
+        } catch (availabilityError) {
+            console.warn('Availability refresh failed:', availabilityError);
+        }
+    };
 
     useEffect(() => {
         if (!tutorId) return;
@@ -34,6 +56,7 @@ export default function TutorProfilePage() {
                 } else {
                     setError('Tutor not found');
                 }
+                await refreshAvailability();
 
                 // Fetch Reviews
                 const reviewRes = await reviewService.getTutorReviews(tutorId);
@@ -49,6 +72,57 @@ export default function TutorProfilePage() {
         };
         fetchTutorData();
     }, [tutorId]);
+
+    useEffect(() => {
+        if (!tutorId) {
+            return;
+        }
+
+        const intervalId = window.setInterval(() => {
+            refreshAvailability();
+        }, 20000);
+
+        const handleFocusOrVisible = () => {
+            if (document.visibilityState === 'visible') {
+                refreshAvailability();
+            }
+        };
+
+        window.addEventListener('focus', handleFocusOrVisible);
+        document.addEventListener('visibilitychange', handleFocusOrVisible);
+
+        return () => {
+            window.clearInterval(intervalId);
+            window.removeEventListener('focus', handleFocusOrVisible);
+            document.removeEventListener('visibilitychange', handleFocusOrVisible);
+        };
+    }, [tutorId]);
+
+    useEffect(() => {
+        if (!tutorId || !accessToken) {
+            return;
+        }
+
+        const socket = io(getSocketUrl(), {
+            auth: { token: accessToken },
+            transports: ['websocket', 'polling'],
+            reconnection: true
+        });
+
+        socket.on('connect', () => {
+            socket.emit('join_tutor_availability', { tutorId });
+        });
+
+        socket.on('availability_updated', (payload: { tutorId: string }) => {
+            if (payload?.tutorId === tutorId) {
+                refreshAvailability();
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [tutorId, accessToken]);
 
     if (loading) {
         return (
@@ -315,9 +389,9 @@ export default function TutorProfilePage() {
                         <button onClick={() => router.push(`/dashboard/book/${tutor._id}`)} className="text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline">View Full Calendar</button>
                         </div>
 
-                        {tutor.availableSlots && tutor.availableSlots.length > 0 ? (
+                        {availableSlots && availableSlots.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {tutor.availableSlots.slice(0, 4).map((slot) => {
+                                {availableSlots.slice(0, 4).map((slot) => {
                                     const start = new Date(slot.startTime);
                                     return (
                                         <div key={slot._id} className="bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 p-4 rounded-2xl flex items-center justify-between group hover:border-blue-500/30 transition-all">

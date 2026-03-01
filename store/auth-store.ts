@@ -38,13 +38,20 @@ export const useAuthStore = create<AuthState>()(
             accessToken: null,
             refreshToken: null,
             isAuthenticated: false,
-            setAuth: (user, accessToken, refreshToken) => 
-                set({ 
-                    user, 
-                    accessToken, 
-                    refreshToken, 
-                    isAuthenticated: true 
-                }),
+            setAuth: (user, accessToken, refreshToken) => {
+                set({
+                    user,
+                    accessToken,
+                    refreshToken,
+                    isAuthenticated: true
+                });
+
+                if (typeof window !== 'undefined') {
+                    const maxAge = 7 * 24 * 60 * 60;
+                    document.cookie = `user-role=${user.role}; path=/; max-age=${maxAge}; SameSite=Lax`;
+                    document.cookie = `access-token=${accessToken}; path=/; max-age=${maxAge}; SameSite=Lax`;
+                }
+            },
             updateUser: (userData) =>
                 set((state) => ({
                     user: state.user ? { ...state.user, ...userData } : null,
@@ -60,6 +67,7 @@ export const useAuthStore = create<AuthState>()(
                     localStorage.removeItem('auth-storage');
                     // Clear the role cookie used by middleware
                     document.cookie = 'user-role=; path=/; max-age=0; SameSite=Lax';
+                    document.cookie = 'access-token=; path=/; max-age=0; SameSite=Lax';
                 }
             },
             clearAuth: () => set({ 

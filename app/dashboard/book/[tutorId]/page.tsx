@@ -3,17 +3,37 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { tutorService, bookingService, Tutor } from '@/services';
+import io from 'socket.io-client';
 import { Loader2, Calendar, Clock, ArrowLeft, Banknote, Info, AlertCircle, Shield, CheckCircle2 } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
 import { cn } from '@/lib/utils';
+
+const getSocketUrl = () => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api';
+    return apiUrl.replace(/\/api\/?$/, '');
+};
+
+const formatLocalDateInput = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
+const formatLocalTimeInput = (date: Date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+};
 
 export default function BookingCreationPage() {
     const router = useRouter();
     const params = useParams();
     const tutorId = params.tutorId as string;
-    const { user } = useAuthStore();
+    const { user, accessToken } = useAuthStore();
 
     const [tutor, setTutor] = useState<Tutor | null>(null);
+    const [availableSlots, setAvailableSlots] = useState<Tutor['availableSlots']>([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -26,6 +46,21 @@ export default function BookingCreationPage() {
     const [notes, setNotes] = useState('');
     const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
+    const refreshAvailability = async () => {
+        if (!tutorId) {
+            return;
+        }
+
+        try {
+            const response = await tutorService.getTutorAvailability(tutorId);
+            if (response.success) {
+                setAvailableSlots(response.slots);
+            }
+        } catch (availabilityError) {
+            console.warn('Availability refresh failed:', availabilityError);
+        }
+    };
+
     useEffect(() => {
         if (!tutorId) return;
         const fetchTutor = async () => {
@@ -36,6 +71,7 @@ export default function BookingCreationPage() {
                 } else {
                     setError('Tutor not found');
                 }
+                await refreshAvailability();
             } catch (err: any) {
                 setError(err.message || 'Failed to load tutor details');
             } finally {
@@ -45,10 +81,61 @@ export default function BookingCreationPage() {
         fetchTutor();
     }, [tutorId]);
 
+    useEffect(() => {
+        if (!tutorId) {
+            return;
+        }
+
+        const intervalId = window.setInterval(() => {
+            refreshAvailability();
+        }, 20000);
+
+        const handleFocusOrVisible = () => {
+            if (document.visibilityState === 'visible') {
+                refreshAvailability();
+            }
+        };
+
+        window.addEventListener('focus', handleFocusOrVisible);
+        document.addEventListener('visibilitychange', handleFocusOrVisible);
+
+        return () => {
+            window.clearInterval(intervalId);
+            window.removeEventListener('focus', handleFocusOrVisible);
+            document.removeEventListener('visibilitychange', handleFocusOrVisible);
+        };
+    }, [tutorId]);
+
+    useEffect(() => {
+        if (!tutorId || !accessToken) {
+            return;
+        }
+
+        const socket = io(getSocketUrl(), {
+            auth: { token: accessToken },
+            transports: ['websocket', 'polling'],
+            reconnection: true
+        });
+
+        socket.on('connect', () => {
+            socket.emit('join_tutor_availability', { tutorId });
+        });
+
+        socket.on('availability_updated', (payload: { tutorId: string }) => {
+            if (payload?.tutorId === tutorId) {
+                refreshAvailability();
+            }
+        });
+
+        return () => {
+            socket.disconnect();
+        };
+    }, [tutorId, accessToken]);
+
     const handleSlotSelect = (slot: any) => {
         const startDate = new Date(slot.startTime);
-        setDate(startDate.toISOString().split('T')[0]);
-        setTime(startDate.toTimeString().split(' ')[0].substring(0, 5));
+        setDate(formatLocalDateInput(startDate));
+        setTime(formatLocalTimeInput(startDate));
 
         // Calculate duration based on slot start/end
         const endDate = new Date(slot.endTime);
@@ -89,12 +176,15 @@ export default function BookingCreationPage() {
                 notes
             });
 
+            await refreshAvailability();
+
             setSuccess(true);
             setTimeout(() => {
                 router.push('/dashboard/bookings');
             }, 2000);
         } catch (err: any) {
             setError(err.response?.data?.message || err.message || 'Failed to create booking');
+            await refreshAvailability();
             setSubmitting(false);
         }
     };
@@ -183,14 +273,14 @@ export default function BookingCreationPage() {
                         </div>
                     </div>
 
-                    {tutor.availableSlots && tutor.availableSlots.length > 0 && (
+                    {availableSlots && availableSlots.length > 0 && (
                         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-3xl p-6">
                             <h4 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center">
                                 <Calendar className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
                                 Recommended Slots
                             </h4>
                             <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                {tutor.availableSlots
+                                {availableSlots
                                     .filter(slot => new Date(slot.startTime) > new Date())
                                     .map((slot) => (
                                         <button
