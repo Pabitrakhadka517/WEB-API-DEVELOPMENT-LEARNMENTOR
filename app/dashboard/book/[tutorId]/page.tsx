@@ -46,13 +46,15 @@ export default function BookingCreationPage() {
     const [notes, setNotes] = useState('');
     const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 
+    const availabilityTutorId = tutor?._id || tutorId;
+
     const refreshAvailability = async () => {
-        if (!tutorId) {
+        if (!availabilityTutorId) {
             return;
         }
 
         try {
-            const response = await tutorService.getTutorAvailability(tutorId);
+            const response = await tutorService.getTutorAvailability(availabilityTutorId);
             if (response.success) {
                 setAvailableSlots(response.slots);
             }
@@ -68,6 +70,7 @@ export default function BookingCreationPage() {
                 const response = await tutorService.getTutorById(tutorId);
                 if (response.success) {
                     setTutor(response.tutor);
+                    setAvailableSlots(response.tutor.availableSlots || []);
                 } else {
                     setError('Tutor not found');
                 }
@@ -107,7 +110,7 @@ export default function BookingCreationPage() {
     }, [tutorId]);
 
     useEffect(() => {
-        if (!tutorId || !accessToken) {
+        if (!availabilityTutorId || !accessToken) {
             return;
         }
 
@@ -118,11 +121,11 @@ export default function BookingCreationPage() {
         });
 
         socket.on('connect', () => {
-            socket.emit('join_tutor_availability', { tutorId });
+            socket.emit('join_tutor_availability', { tutorId: availabilityTutorId });
         });
 
         socket.on('availability_updated', (payload: { tutorId: string }) => {
-            if (payload?.tutorId === tutorId) {
+            if (payload?.tutorId === availabilityTutorId) {
                 refreshAvailability();
             }
         });
@@ -130,7 +133,7 @@ export default function BookingCreationPage() {
         return () => {
             socket.disconnect();
         };
-    }, [tutorId, accessToken]);
+    }, [availabilityTutorId, accessToken]);
 
     const handleSlotSelect = (slot: any) => {
         const startDate = new Date(slot.startTime);

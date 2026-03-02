@@ -90,8 +90,10 @@ export default function TutorStudentsPage() {
             if (res.success && res.chat) {
                 router.push(`/dashboard/messages?chatId=${res.chat._id}`);
             }
-        } catch (e) {
-            console.error(e);
+        } catch (e: any) {
+            const msg = e?.response?.data?.message || e?.message || 'Failed to create chat.';
+            alert(msg);
+            console.error('Create chat failed:', msg);
         }
     };
 

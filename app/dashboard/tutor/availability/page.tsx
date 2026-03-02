@@ -13,7 +13,7 @@ interface TimeSlot {
     date: string; // YYYY-MM-DD
     startTime: string; // HH:MM
     endTime: string;
-    isBlocked: boolean;
+    isBooked: boolean;
 }
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -31,6 +31,20 @@ const toLocalDateKey = (date: Date) => {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+};
+
+const formatLocalTime = (date: Date) => {
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`;
+};
+
+const timeToMinutes = (time: string) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    if (!Number.isFinite(hours) || !Number.isFinite(minutes)) {
+        return NaN;
+    }
+    return hours * 60 + minutes;
 };
 
 export default function TutorAvailabilityPage() {
@@ -56,11 +70,11 @@ export default function TutorAvailabilityPage() {
             const res = await tutorService.getMyAvailability();
             if (res.success) {
                 // Map backend slots to frontend format
-                const mapped = res.slots.map(s => ({
+                const mapped: TimeSlot[] = res.slots.map(s => ({
                     id: s._id,
                     date: toLocalDateKey(new Date(s.startTime)),
-                    startTime: new Date(s.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
-                    endTime: new Date(s.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }),
+                    startTime: formatLocalTime(new Date(s.startTime)),
+                    endTime: formatLocalTime(new Date(s.endTime)),
                     isBooked: s.isBooked
                 }));
                 setSlots(mapped);
@@ -98,6 +112,46 @@ export default function TutorAvailabilityPage() {
 
     const addSlot = () => {
         if (!selectedDate) return;
+
+        const newStart = timeToMinutes(newSlot.startTime);
+        const newEnd = timeToMinutes(newSlot.endTime);
+
+        if (!Number.isFinite(newStart) || !Number.isFinite(newEnd) || newStart >= newEnd) {
+            alert('End time must be after start time.');
+            return;
+        }
+
+        const duplicate = slots.some(slot =>
+            slot.date === selectedDate &&
+            slot.startTime === newSlot.startTime &&
+            slot.endTime === newSlot.endTime
+        );
+
+        if (duplicate) {
+            alert('This time slot already exists for the selected date.');
+            return;
+        }
+
+        const hasOverlap = slots.some(slot => {
+            if (slot.date !== selectedDate) {
+                return false;
+            }
+
+            const slotStart = timeToMinutes(slot.startTime);
+            const slotEnd = timeToMinutes(slot.endTime);
+
+            if (!Number.isFinite(slotStart) || !Number.isFinite(slotEnd)) {
+                return false;
+            }
+
+            return newStart < slotEnd && newEnd > slotStart;
+        });
+
+        if (hasOverlap) {
+            alert('Availability slots cannot overlap. Please choose another time range.');
+            return;
+        }
+
         const slot: TimeSlot = {
             id: Date.now().toString(),
             date: selectedDate,
@@ -110,6 +164,11 @@ export default function TutorAvailabilityPage() {
     };
 
     const removeSlot = (id: string) => {
+        const target = slots.find(s => s.id === id);
+        if (target?.isBooked) {
+            alert('Booked slots cannot be removed.');
+            return;
+        }
         setSlots(prev => prev.filter(s => s.id !== id));
     };
 
@@ -125,18 +184,50 @@ export default function TutorAvailabilityPage() {
     const handleSave = async () => {
         setSaving(true);
         try {
+            const now = new Date();
+
             // Convert slots to ISO format for backend
-            const formattedSlots = slots.map(s => {
-                const combinedStart = `${s.date}T${s.startTime}:00`;
-                const combinedEnd = `${s.date}T${s.endTime}:00`;
-                return {
-                    startTime: new Date(combinedStart).toISOString(),
-                    endTime: new Date(combinedEnd).toISOString()
-                };
-            });
+            const formattedSlots = slots
+                .filter(s => s?.date && s?.startTime && s?.endTime && !s.isBooked)
+                .map(s => {
+                    const combinedStart = `${s.date}T${s.startTime}:00`;
+                    const combinedEnd = `${s.date}T${s.endTime}:00`;
+                    const startDate = new Date(combinedStart);
+                    const endDate = new Date(combinedEnd);
+
+                    return {
+                        startDate,
+                        endDate
+                    };
+                })
+                .filter(item => {
+                    if (isNaN(item.startDate.getTime()) || isNaN(item.endDate.getTime())) {
+                        return false;
+                    }
+
+                    if (item.startDate >= item.endDate) {
+                        return false;
+                    }
+
+                    return item.startDate > now;
+                })
+                .map(item => ({
+                    startTime: item.startDate.toISOString(),
+                    endTime: item.endDate.toISOString()
+                }));
 
             const res = await tutorService.updateMyAvailability(formattedSlots);
             if (res.success) {
+                if (res.slots) {
+                    const mapped: TimeSlot[] = res.slots.map(s => ({
+                        id: s._id,
+                        date: toLocalDateKey(new Date(s.startTime)),
+                        startTime: formatLocalTime(new Date(s.startTime)),
+                        endTime: formatLocalTime(new Date(s.endTime)),
+                        isBooked: s.isBooked
+                    }));
+                    setSlots(mapped);
+                }
                 alert('✅ Availability updated successfully!');
                 fetchSlots();
             }
@@ -295,8 +386,14 @@ export default function TutorAvailabilityPage() {
                                                 <span className="text-sm font-bold text-slate-900 dark:text-white flex-1">
                                                     {slot.startTime} – {slot.endTime}
                                                 </span>
+                                                {slot.isBooked && (
+                                                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                                                        Booked
+                                                    </span>
+                                                )}
                                                 <button
                                                     onClick={() => removeSlot(slot.id)}
+                                                    disabled={slot.isBooked}
                                                     className="p-1 hover:bg-red-500/20 rounded-lg transition-colors"
                                                 >
                                                     <Trash2 className="w-3.5 h-3.5 text-red-400" />

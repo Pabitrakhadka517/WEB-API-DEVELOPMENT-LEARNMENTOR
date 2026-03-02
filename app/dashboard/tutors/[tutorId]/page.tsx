@@ -31,13 +31,15 @@ export default function TutorProfilePage() {
     const [reviewsLoading, setReviewsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    const availabilityTutorId = tutor?._id || tutorId;
+
     const refreshAvailability = async () => {
-        if (!tutorId) {
+        if (!availabilityTutorId) {
             return;
         }
 
         try {
-            const response = await tutorService.getTutorAvailability(tutorId);
+            const response = await tutorService.getTutorAvailability(availabilityTutorId);
             if (response.success) {
                 setAvailableSlots(response.slots);
             }
@@ -53,6 +55,7 @@ export default function TutorProfilePage() {
                 const response = await tutorService.getTutorById(tutorId);
                 if (response.success) {
                     setTutor(response.tutor);
+                    setAvailableSlots(response.tutor.availableSlots || []);
                 } else {
                     setError('Tutor not found');
                 }
@@ -99,7 +102,7 @@ export default function TutorProfilePage() {
     }, [tutorId]);
 
     useEffect(() => {
-        if (!tutorId || !accessToken) {
+        if (!availabilityTutorId || !accessToken) {
             return;
         }
 
@@ -110,11 +113,11 @@ export default function TutorProfilePage() {
         });
 
         socket.on('connect', () => {
-            socket.emit('join_tutor_availability', { tutorId });
+            socket.emit('join_tutor_availability', { tutorId: availabilityTutorId });
         });
 
         socket.on('availability_updated', (payload: { tutorId: string }) => {
-            if (payload?.tutorId === tutorId) {
+            if (payload?.tutorId === availabilityTutorId) {
                 refreshAvailability();
             }
         });
@@ -122,7 +125,7 @@ export default function TutorProfilePage() {
         return () => {
             socket.disconnect();
         };
-    }, [tutorId, accessToken]);
+    }, [availabilityTutorId, accessToken]);
 
     if (loading) {
         return (
