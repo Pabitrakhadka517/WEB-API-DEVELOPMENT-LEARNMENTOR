@@ -204,4 +204,303 @@ body {
 .dark .dashboard-bg {
   background-image:
     radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.04) 0%, transparent 50%);}
+    radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.04) 0%, transparent 50%);
+}
+
+/* ======= RESPONSIVE CONTAINER UTILITIES ======= */
+/* Container with proper max-widths for all screen sizes */
+.container-responsive {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container-responsive {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .container-responsive {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-responsive {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-responsive {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container-responsive {
+    max-width: 1440px;
+  }
+}
+
+/* Ultrawide support (2560px+) */
+@media (min-width: 2560px) {
+  .container-responsive {
+    max-width: 1920px;
+  }
+}
+
+/* ======= RESPONSIVE TYPOGRAPHY ======= */
+/* Fluid heading scale for all screen sizes */
+.heading-xl {
+  font-size: clamp(2rem, 5vw, 4rem);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.heading-lg {
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.heading-md {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+.heading-sm {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.body-lg {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.6;
+}
+
+.body-md {
+  font-size: clamp(0.875rem, 1.25vw, 1rem);
+  line-height: 1.5;
+}
+
+/* ======= RESPONSIVE SPACING UTILITIES ======= */
+/* Consistent spacing that scales with viewport */
+.section-padding {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+  .section-padding {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .section-padding {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+}
+
+/* Card spacing that adapts */
+.card-padding {
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .card-padding {
+    padding: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .card-padding {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .card-padding {
+    padding: 2rem;
+  }
+}
+
+/* ======= RESPONSIVE GRID GAPS ======= */
+.grid-gap-responsive {
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .grid-gap-responsive {
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .grid-gap-responsive {
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-gap-responsive {
+    gap: 2rem;
+  }
+}
+
+/* ======= IMPROVED SCROLLBAR FOR MOBILE ======= */
+@media (max-width: 640px) {
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+}
+
+/* ======= TOUCH TARGETS FOR MOBILE ======= */
+@media (max-width: 768px) {
+  button, a, input, select, textarea {
+    min-height: 44px;
+  }
+  
+  /* Exception for inline links and small icons */
+  .inline-link, .icon-btn-sm {
+    min-height: auto;
+  }
+}
+
+/* ======= SAFE AREA INSETS FOR NOTCHED DEVICES ======= */
+@supports (padding: max(0px)) {
+  .safe-area-inset {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* ======= ULTRAWIDE SCREEN ENHANCEMENTS ======= */
+@media (min-width: 1920px) {
+  .ultrawide-container {
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+@media (min-width: 2560px) {
+  .ultrawide-container {
+    max-width: 1920px;
+  }
+  
+  /* Slightly larger base font for ultrawide */
+  html {
+    font-size: 17px;
+  }
+}
+
+/* ======= MOBILE-FIRST VISIBILITY UTILITIES ======= */
+.mobile-only {
+  display: block;
+}
+
+.tablet-up {
+  display: none;
+}
+
+.desktop-up {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+  .tablet-up {
+    display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .desktop-up {
+    display: block;
+  }
+}
+
+/* ======= ASPECT RATIO CONTAINERS ======= */
+.aspect-card {
+  aspect-ratio: 16 / 10;
+}
+
+.aspect-square {
+  aspect-ratio: 1;
+}
+
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+/* ======= RESPONSIVE FLEX UTILITIES ======= */
+.flex-col-sm-row {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 640px) {
+  .flex-col-sm-row {
+    flex-direction: row;
+  }
+}
+
+.flex-col-md-row {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .flex-col-md-row {
+    flex-direction: row;
+  }
+}
+
+/* ======= IMPROVED FOCUS STATES FOR ACCESSIBILITY ======= */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ======= REDUCED MOTION PREFERENCE ======= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

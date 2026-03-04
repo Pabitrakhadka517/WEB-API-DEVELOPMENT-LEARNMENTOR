@@ -47,7 +47,7 @@ const SidebarItem = ({ href, icon: Icon, label, active }: SidebarItemProps) => (
     <Link
         href={href}
         className={cn(
-            "flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+            "flex items-center space-x-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl transition-all duration-200 group min-h-[44px]",
             active
                 ? "bg-white/20 dark:bg-blue-500/10 text-white dark:text-blue-400 font-semibold"
                 : "text-blue-100 dark:text-slate-400 hover:bg-white/10 dark:hover:bg-slate-700/50 hover:text-white dark:hover:text-white"
@@ -267,14 +267,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 !isSidebarOpen && "ml-0"
             )}>
                 <AnnouncementBanner />
-                <header className="lg:hidden h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-6 sticky top-0 z-40 shadow-sm">
+                <header className="lg:hidden h-14 sm:h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-4 sm:px-6 sticky top-0 z-40 shadow-sm">
                     <Link href="/">
                         <Logo 
                             showText={false} 
-                            containerClassName="w-11 h-11" 
+                            containerClassName="w-10 h-10 sm:w-11 sm:h-11" 
                         />
                     </Link>
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-2 sm:space-x-3">
                         <ThemeToggle variant="button" size="sm" />
 
                         {/* Mobile Logout Button */}
@@ -287,13 +287,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                             <LogOut className="w-5 h-5" />
                         </button>
 
-                        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 text-slate-500 dark:text-slate-400">
+                        <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
                             {isSidebarOpen ? <X /> : <Menu />}
                         </button>
                     </div>
                 </header>
 
-                <div className="p-6 lg:p-10 max-w-7xl mx-auto dashboard-bg min-h-[calc(100vh-4rem)]">
+                {/* Responsive content area with proper max-width for ultrawide screens */}
+                <div className="p-4 sm:p-6 lg:p-8 xl:p-10 2xl:p-12 max-w-7xl 2xl:max-w-[1600px] mx-auto dashboard-bg min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-4rem)]">
                     {children}
                 </div>
             </main>

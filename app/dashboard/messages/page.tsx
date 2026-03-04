@@ -219,7 +219,7 @@ export default function MessagesPage() {
         setSelectedFile(file);
 
         // Generate preview for images
-        if (file.mimetype?.startsWith('image/') || file.type?.startsWith('image/')) {
+        if (file.type?.startsWith('image/')) {
             const reader = new FileReader();
             reader.onloadend = () => {
                 setFilePreview(reader.result as string);

@@ -157,7 +157,7 @@ export default function TutorAvailabilityPage() {
             date: selectedDate,
             startTime: newSlot.startTime,
             endTime: newSlot.endTime,
-            isBlocked: false
+            isBooked: false
         };
         setSlots(prev => [...prev, slot]);
         setShowAddSlot(false);

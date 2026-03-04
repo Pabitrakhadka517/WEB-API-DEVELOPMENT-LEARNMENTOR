@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { notificationService, Notification } from '@/services/notification.service';
 import { Loader2, Bell, Check, Trash2, Mail, Calendar, CheckCircle } from 'lucide-react';
 import { useAuthStore } from '@/store/auth-store';
+import { useSocket, SocketNotification } from '@/hooks/useSocket';
 import { cn } from '@/lib/utils';
 
 // Helper for time ago
@@ -32,6 +33,7 @@ export default function NotificationsPage() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(true);
     const [unreadCount, setUnreadCount] = useState(0);
+    const { connect, onNotification, disconnect } = useSocket();
 
     const fetchNotifications = async () => {
         setLoading(true);
@@ -51,9 +53,42 @@ export default function NotificationsPage() {
         setUnreadCount(count);
     };
 
+    // Handle incoming real-time notification
+    const handleNewNotification = useCallback((socketNotif: SocketNotification) => {
+        // Only add if it's for the current user and doesn't already exist
+        if (user?.id && socketNotif.recipient === user.id) {
+            setNotifications(prev => {
+                // Check for duplicates
+                if (prev.some(n => n._id === socketNotif._id)) {
+                    return prev;
+                }
+                // Add new notification at the top
+                const newNotif: Notification = {
+                    _id: socketNotif._id,
+                    message: socketNotif.message,
+                    type: socketNotif.type,
+                    isRead: socketNotif.isRead,
+                    createdAt: socketNotif.createdAt,
+                    relatedId: socketNotif.relatedId,
+                };
+                return [newNotif, ...prev];
+            });
+            setUnreadCount(prev => prev + 1);
+        }
+    }, [user?.id]);
+
     useEffect(() => {
         fetchNotifications();
-    }, []);
+
+        // Connect to socket for real-time updates
+        connect();
+        const unsubscribe = onNotification(handleNewNotification);
+
+        return () => {
+            unsubscribe();
+            disconnect();
+        };
+    }, [connect, disconnect, onNotification, handleNewNotification]);
 
     const handleMarkAsRead = async (id: string) => {
         try {

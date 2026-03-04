@@ -26,7 +26,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
         <div className="min-h-screen bg-white dark:bg-slate-900 flex">
             <AdminSidebar userName={user.fullName || user.email} />
-            <div className="flex-1 ml-64">
+            {/* Main content: pt-16 on mobile for header, ml-72 on lg+ for sidebar */}
+            <div className="flex-1 pt-16 lg:pt-0 lg:ml-72 transition-all duration-300">
                 {children}
             </div>
         </div>
