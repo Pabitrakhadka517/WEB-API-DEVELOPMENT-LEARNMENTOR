@@ -62,7 +62,7 @@ export default function NotificationsPage() {
                 if (prev.some(n => n._id === socketNotif._id)) {
                     return prev;
                 }
-                // Add new notification at the top
+                // Add new notification at the top of chat list  
                 const newNotif: Notification = {
                     _id: socketNotif._id,
                     message: socketNotif.message,
