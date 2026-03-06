@@ -219,10 +219,10 @@ export default function StudentDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {statCards.map((stat, i) => (
                     <div key={i} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 relative overflow-hidden group hover:scale-[1.02] transition-all duration-300 hover:border-slate-300 dark:hover:border-slate-600">
-                        <div className={cn("absolute top-0 right-0 w-32 h-32 bg-gradient-to-br opacity-10 blur-2xl -mr-10 -mt-10 group-hover:opacity-20 transition-opacity", stat.color)} />
+                        <div className={cn("absolute top-0 right-0 w-32 h-32 bg-linear-to-br opacity-10 blur-2xl -mr-10 -mt-10 group-hover:opacity-20 transition-opacity", stat.color)} />
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-3">
-                                <div className={cn("w-9 h-9 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg", stat.color, stat.glow)}>
+                                <div className={cn("w-9 h-9 rounded-xl bg-linear-to-br flex items-center justify-center shadow-lg", stat.color, stat.glow)}>
                                     <stat.icon className="w-4 h-4 text-white" />
                                 </div>
                                 <SparkLine data={stat.spark} />

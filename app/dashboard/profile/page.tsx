@@ -181,7 +181,7 @@ export default function ProfilePage() {
                         ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300"
                         : "bg-red-500/10 border border-red-500/20 text-red-700 dark:text-red-300"
                 )}>
-                    {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 flex-shrink-0" /> : <AlertCircle className="w-5 h-5 flex-shrink-0" />}
+                    {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <AlertCircle className="w-5 h-5 shrink-0" />}
                     <p className="text-sm font-medium flex-1">{message.text}</p>
                     <button onClick={() => setMessage(null)} className="text-slate-400 hover:text-slate-600 dark:text-white/40 dark:hover:text-white/80 transition-colors">
                         <X className="w-4 h-4" />
@@ -196,7 +196,7 @@ export default function ProfilePage() {
 
                     <div className="relative z-10 flex flex-col lg:flex-row gap-8 items-start">
                         {/* Profile Image Section */}
-                        <div className="flex flex-col items-center space-y-4 lg:w-44 flex-shrink-0">
+                        <div className="flex flex-col items-center space-y-4 lg:w-44 shrink-0">
                             <div className="relative group">
                                 <div className="w-36 h-36 rounded-2xl overflow-hidden bg-blue-100 dark:bg-blue-900/30 border-2 border-blue-500/20 shadow-md transition-transform group-hover:scale-[1.02] duration-300">
                                     {previewImage ? (
@@ -412,7 +412,7 @@ export default function ProfilePage() {
                                 <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     Teaching Subjects
                                 </label>
-                                <div className="flex flex-wrap gap-2 min-h-[44px] p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+                                <div className="flex flex-wrap gap-2 min-h-11 p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
                                     {watchedSubjects.length === 0 && <span className="text-slate-600 dark:text-slate-400 text-sm">No subjects added yet</span>}
                                     {watchedSubjects.map((subject, index) => (
                                         <span key={index} className="inline-flex items-center px-3 py-1 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 text-sm font-semibold border border-blue-500/20">
@@ -445,7 +445,7 @@ export default function ProfilePage() {
                                 <label className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                                     Languages
                                 </label>
-                                <div className="flex flex-wrap gap-2 min-h-[44px] p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+                                <div className="flex flex-wrap gap-2 min-h-11 p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
                                     {watchedLanguages.length === 0 && <span className="text-slate-600 dark:text-slate-400 text-sm">No languages added yet</span>}
                                     {watchedLanguages.map((lang, index) => (
                                         <span key={index} className="inline-flex items-center px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-600 dark:text-emerald-300 text-sm font-semibold border border-emerald-500/20">
