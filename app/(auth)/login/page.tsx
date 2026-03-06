@@ -93,14 +93,14 @@ function LoginContent() {
         <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-8 shadow-sm">
           {registered && (
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg sm:rounded-xl bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 flex items-center gap-2 sm:gap-3">
-              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 dark:text-green-400 shrink-0" />
               <p className="text-xs sm:text-sm font-medium text-green-700 dark:text-green-300">Account created successfully! Please sign in.</p>
             </div>
           )}
           
           {error && (
             <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg sm:rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 flex items-center gap-2 sm:gap-3">
-              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400 flex-shrink-0" />
+              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-600 dark:text-red-400 shrink-0" />
               <p className="text-xs sm:text-sm font-medium text-red-700 dark:text-red-300">{error}</p>
             </div>
           )}
@@ -117,7 +117,7 @@ function LoginContent() {
                   {...register('email')}
                   type="email"
                   className={cn(
-                    "w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-3.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg sm:rounded-xl text-sm sm:text-base text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[44px]",
+                    "w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-3 sm:py-3.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg sm:rounded-xl text-sm sm:text-base text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-11",
                     errors.email && "border-red-400 focus:ring-red-400/20 focus:border-red-400"
                   )}
                   placeholder="you@example.com"
@@ -146,7 +146,7 @@ function LoginContent() {
                   {...register('password')}
                   type={showPassword ? 'text' : 'password'}
                   className={cn(
-                    "w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 sm:py-3.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg sm:rounded-xl text-sm sm:text-base text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[44px]",
+                    "w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 sm:py-3.5 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg sm:rounded-xl text-sm sm:text-base text-slate-900 dark:text-white placeholder:text-slate-400 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-11",
                     errors.password && "border-red-400 focus:ring-red-400/20 focus:border-red-400"
                   )}
                   placeholder="Enter your password"
@@ -170,7 +170,7 @@ function LoginContent() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 sm:py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg sm:rounded-xl font-semibold text-sm shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 min-h-[44px]"
+              className="w-full py-3 sm:py-3.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg sm:rounded-xl font-semibold text-sm shadow-sm hover:shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 min-h-11"
             >
               {isLoading ? (
                 <>
@@ -198,7 +198,7 @@ function LoginContent() {
           
           <Link
             href="/register"
-            className="block w-full py-3 sm:py-3.5 text-center text-sm font-semibold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 hover:border-blue-400 dark:hover:border-blue-500/60 hover:bg-blue-50 dark:hover:bg-blue-500/5 rounded-lg sm:rounded-xl transition-all min-h-[44px] flex items-center justify-center"
+            className="w-full py-3 sm:py-3.5 text-center text-sm font-semibold text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 hover:border-blue-400 dark:hover:border-blue-500/60 hover:bg-blue-50 dark:hover:bg-blue-500/5 rounded-lg sm:rounded-xl transition-all min-h-11 flex items-center justify-center"
           >
             Create an Account
           </Link>
