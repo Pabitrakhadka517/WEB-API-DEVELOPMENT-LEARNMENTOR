@@ -5,7 +5,7 @@ import { ThemeToggle } from '@/components/ThemeToggle';
 import Logo from '@/components/Logo';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
-  return (
+  return (//testing to merge
     <div className="flex min-h-screen bg-white dark:bg-slate-900 overflow-hidden">
       {/* Left Side: Visual/Marketing */}
       <div className="hidden lg:flex w-1/2 xl:w-[55%] 2xl:w-1/2 relative items-center justify-center p-8 xl:p-12 text-white overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 dark:from-blue-900 dark:to-slate-900">
